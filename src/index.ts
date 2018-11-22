@@ -2,11 +2,11 @@ import { Application } from 'probot' // eslint-disable-line no-unused-vars
 import { PullRequestsCreateReviewParams } from '@octokit/rest'
 
 export = (app: Application) => {
-  app.on(['pull_request.opened', 'pull_request.reopened', 'pull_request.labeled'], async (context) => {
+  app.on(['pull_request.opened', 'pull_request.reopened'], async (context) => {
     app.log(context)
 
     // reading configuration
-    const config = await context.config('config.yml')
+    const config = await context.config('autoapproval.yml')
     context.log(config, 'Loaded config')
 
     const pr = context.payload.pull_request
@@ -24,6 +24,13 @@ export = (app: Application) => {
       const prParams = context.issue({ event: "APPROVE", body: "Approved :+1:" });
 
       await context.github.pullRequests.createReview(prParams as PullRequestsCreateReviewParams)
+
+      // if there are labels required to be added, add them
+      const labelsToAdd = config.apply_labels
+      if (labelsToAdd.length > 0) {
+        await context.github.issues.addLabels(context.issue({ labels: labelsToAdd}))
+      }
+
     } else {
       // one of the ckecks failed
       context.log("Condition failed! \n - missing required labels: %s\n - PR owner found: %s", missingRequiredLabels, ownerSatisfied)

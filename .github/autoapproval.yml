@@ -5,3 +5,6 @@ from_owner:
 
 required_labels: 
   - ready
+
+apply_labels:
+  - merge
