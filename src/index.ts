@@ -28,6 +28,7 @@ export = (app: Application) => {
       // if there are labels required to be added, add them
       const labelsToAdd = config.apply_labels
       if (labelsToAdd.length > 0) {
+        // trying to apply existing labels to PR. If labels ddn't exist, this call will fail
         await context.github.issues.addLabels(context.issue({ labels: labelsToAdd}))
       }
 
