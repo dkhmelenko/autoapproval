@@ -54,4 +54,4 @@ For more, check out the [Contributing Guide](CONTRIBUTING.md).
 
 ## License
 
-[ISC](LICENSE) © 2018 Dmytro Khmelenko <d.khmelenko@gmail.com> (dkhmelenko.github.io)
+[ISC](LICENSE) © 2018 [Dmytro Khmelenko](https://dkhmelenko.github.io/)
