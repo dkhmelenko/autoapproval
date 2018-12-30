@@ -1,0 +1,25 @@
+{
+  "action": "opened",
+  "pull_request": {
+    "number": 1,
+    "user": {
+      "login": "dkhmelenko"
+    },
+    "labels": [
+      {
+        "id": 1111,
+        "node_id": "MDU6TGFiZWw5NDk3Mzc1MDU=",
+        "url": "https://api.github.com/repos/Codertocat/Hello-World/labels/bug",
+        "name": "merge",
+        "color": "d73a4a",
+        "default": true
+      }
+    ]
+  },
+  "repository": {
+    "name": "autoapproval",
+    "owner": {
+      "login": "dkhmelenko"
+    }
+  }
+}

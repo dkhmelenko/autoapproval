@@ -17,7 +17,7 @@ export = (app: Application) => {
     // then the assumption is that the PR is already approved and no actions required
     const prLabels = pr.labels.map((label: any) => label.name)
     const labelsToAdd = config.apply_labels
-    const prHasAppliedLabels = labelsToAdd.every((label: String) => prLabels.includes(label))
+    const prHasAppliedLabels = labelsToAdd.length > 0 && labelsToAdd.every((label: String) => prLabels.includes(label))
     context.log("PR labels: %s, config apply labels: %s, condition passed: %s", prLabels, labelsToAdd, prHasAppliedLabels)
     if (prHasAppliedLabels) {
       context.log("PR has already labels to be added after approval. The PR might be already approved.")

@@ -5,17 +5,16 @@ import nock from 'nock'
 // Requiring our app implementation
 import myProbotApp from '../src'
 import { Probot } from 'probot'
-// Requiring our fixtures
-import payload from './fixtures/issues.opened.json'
-const issueCreatedBody = { body: 'Thanks for opening this issue!' }
+
+const btoa = require('btoa');
 
 nock.disableNetConnect()
 
-describe('My Probot app', () => {
+describe('Autoapproval bot', () => {
   let probot: any
 
   beforeEach(() => {
-    probot = new Probot({ id: 123, cert: 'test' })
+    probot = new Probot({})
     // Load our app into probot
     const app = probot.load(myProbotApp)
 
@@ -23,22 +22,112 @@ describe('My Probot app', () => {
     app.app = () => 'test'
   })
 
-  test('creates a comment when an issue is opened', async (done) => {
-    // Test that we correctly return a test token
-    nock('https://api.github.com')
-      .post('/app/installations/2/access_tokens')
-      .reply(200, { token: 'test' })
+  test('PR has already applied labels and should do nothing', async (done) => {
 
-    // Test that a comment is posted
+    const payload = require('./fixtures/pull_request.opened.json')
+    const config = btoa('from_owner: []\nrequired_labels: []\napply_labels:  \n- merge')
+
     nock('https://api.github.com')
-      .post('/repos/hiimbex/testing-things/issues/1/comments', (body: any) => {
-        done(expect(body).toMatchObject(issueCreatedBody))
-        return true
+      .get('/repos/dkhmelenko/autoapproval/contents/.github/autoapproval.yml')
+      .reply(200, { content: config })
+
+    nock('https://api.github.com')
+      .post('/repos/dkhmelenko/autoapproval/pulls/1/reviews', (body: any) => {
+        throw new Error('PR might be already approved, no need to approve again')
       })
       .reply(200)
 
     // Receive a webhook event
-    await probot.receive({ name: 'issues', payload })
+    await probot.receive({ name: 'pull_request', payload })
+    done()
+    nock.cleanAll()
+  })
+
+  test('PR has required labels and owner satisfied - will be approved', async (done) => {
+
+    const payload = require('./fixtures/pull_request.opened.json')
+    const config = btoa('from_owner:\n  - dkhmelenko\nrequired_labels:\n  - merge\napply_labels: []')
+
+    nock('https://api.github.com')
+      .get('/repos/dkhmelenko/autoapproval/contents/.github/autoapproval.yml')
+      .reply(200, { content: config })
+
+    nock('https://api.github.com')
+      .post('/repos/dkhmelenko/autoapproval/pulls/1/reviews', (body: any) => {
+        return body.event == 'APPROVE'
+      })
+      .reply(200)
+  
+    // Receive a webhook event
+    await probot.receive({ name: 'pull_request', payload })
+    done()
+    nock.cleanAll()
+  })
+
+  test('PR satisfies owner, has no required labels - will NOT be approved', async (done) => {
+    const payload = require('./fixtures/pull_request.opened.json')
+    const config = btoa('from_owner:\n  - dkhmelenko\nrequired_labels:\n  - ready\napply_labels: []')
+
+    nock('https://api.github.com')
+      .get('/repos/dkhmelenko/autoapproval/contents/.github/autoapproval.yml')
+      .reply(200, { content: config })
+
+    nock('https://api.github.com')
+      .post('/repos/dkhmelenko/autoapproval/pulls/1/reviews', (body: any) => {
+        throw new Error('PR should not be approved in this case!')
+      })
+      .reply(200)
+  
+    // Receive a webhook event
+    await probot.receive({ name: 'pull_request', payload })
+    done()
+    nock.cleanAll()
+  })
+
+  test('PR has no owner, has required labels - will NOT be approved', async (done) => {
+    const payload = require('./fixtures/pull_request.opened.json')
+    const config = btoa('from_owner:\n  - blabla\nrequired_labels:\n  - merge\napply_labels: []')
+
+    nock('https://api.github.com')
+      .get('/repos/dkhmelenko/autoapproval/contents/.github/autoapproval.yml')
+      .reply(200, { content: config })
+
+    nock('https://api.github.com')
+      .post('/repos/dkhmelenko/autoapproval/pulls/1/reviews', (body: any) => {
+        throw new Error('PR should not be approved in this case!')
+      })
+      .reply(200)
+  
+    // Receive a webhook event
+    await probot.receive({ name: 'pull_request', payload })
+    done()
+    nock.cleanAll()
+  })
+
+  test('PR approved, label is applied', async (done) => {
+    const payload = require('./fixtures/pull_request.opened.json')
+    const config = btoa('from_owner:\n  - dkhmelenko\nrequired_labels: []\napply_labels:\n  - done')
+
+    nock('https://api.github.com')
+      .get('/repos/dkhmelenko/autoapproval/contents/.github/autoapproval.yml')
+      .reply(200, { content: config })
+
+    nock('https://api.github.com')
+      .post('/repos/dkhmelenko/autoapproval/pulls/1/reviews', (body: any) => {
+        return body.event == 'APPROVE'
+      })
+      .reply(200)
+
+    nock('https://api.github.com')
+      .post('/repos/dkhmelenko/autoapproval/issues/1/labels', (body: any) => {
+        return body.labels.includes('done')
+      })
+      .reply(200)
+  
+    // Receive a webhook event
+    await probot.receive({ name: 'pull_request', payload })
+    done()
+    nock.cleanAll()
   })
 })
 
