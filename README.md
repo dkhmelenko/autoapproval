@@ -2,6 +2,8 @@
 
 A GitHub App built with [Probot](https://github.com/probot/probot) for approving pull requests automatically
 
+![image](https://user-images.githubusercontent.com/4306809/50573484-13a0a100-0dd5-11e9-8ef3-aad5069e83e3.png)
+
 ## Setup
 
 ```sh
