@@ -44,7 +44,9 @@ apply_labels:
 ```
 Assign an empty array if no labels should be applied to PRs (example: `apply_labels: []`).
 
-_NOTE_: If label doesn't exist, it will not be created. In order to apply the label after approving PR automatically, you need to define the label beforehand.
+_NOTES_: 
+1. If label doesn't exist, it will not be created. In order to apply the label after approving PR automatically, you need to define the label beforehand.
+2. If PR already contains all labels from **apply_labels** config, it will not be approved assuming that it was already approved.
 
 ## Contributing
 
