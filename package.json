@@ -18,7 +18,8 @@
     "start": "probot run ./lib/index.js",
     "lint": "standard **/*.ts --fix",
     "test": "jest && standard **/*.ts",
-    "test:watch": "jest --watch --notify --notifyMode=change --coverage"
+    "test:watch": "jest --watch --notify --notifyMode=change --coverage",
+    "heroku-postbuild": "echo Skip build on Heroku"
   },
   "dependencies": {
     "@types/nock": "^9.3.0",
@@ -53,5 +54,6 @@
   },
   "jest": {
     "testEnvironment": "node"
-  }
+  },
+  "heroku-run-build-script": true
 }
