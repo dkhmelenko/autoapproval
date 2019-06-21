@@ -15,8 +15,8 @@ export = (app: Application) => {
     // reading pull request labels for later check
     // if pull request contains all labels to be added, 
     // then the assumption is that the PR is already approved and no actions required
-    const prLabels = pr.labels.map((label: any) => label.name)
-    const labelsToAdd = config.apply_labels
+    const prLabels: String[] = pr.labels.map((label: any) => label.name)
+    const labelsToAdd: String[] = config.apply_labels
     const prHasAppliedLabels = labelsToAdd.length > 0 && labelsToAdd.every((label: String) => prLabels.includes(label))
     context.log("PR labels: %s, config apply labels: %s, condition passed: %s", prLabels, labelsToAdd, prHasAppliedLabels)
     if (prHasAppliedLabels) {
