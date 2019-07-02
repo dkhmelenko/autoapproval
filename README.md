@@ -17,6 +17,17 @@ npm run build
 npm start
 ```
 
+This app requires `Write code` permissions in order not to have issues with approving PRs.
+```
+Repository administrators can require that all pull requests receive a specific number of approving reviews from people with write or admin permissions in the repository or from a designated code owner before they're merged into a protected branch.
+
+...
+
+You won't be able to merge your pull request until the required number of reviewers with write or admin permissions in the repository approve your pull request's changes in their review.
+```
+
+More about it can be found on [Github Help](https://help.github.com/en/articles/about-pull-request-reviews#required-reviews).
+
 ## Configuration
 
 In order to use the bot, the config file should be provided. Config file should be defined in your repository. Config file is the yml file with the path `.github/autoapproval.yml`. The file should have 3 entries.
