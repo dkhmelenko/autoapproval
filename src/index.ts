@@ -3,7 +3,7 @@ import { PullRequestsCreateReviewParams } from '@octokit/rest'
 const getConfig = require('probot-config');
 
 export = (app: Application) => {
-  app.on(['pull_request.opened', 'pull_request.reopened', 'pull_request.labeled'], async (context) => {
+  app.on(['pull_request.opened', 'pull_request.reopened', 'pull_request.labeled', 'pull_request.edited'], async (context) => {
     app.log(context)
 
     // reading configuration
