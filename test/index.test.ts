@@ -62,6 +62,26 @@ describe('Autoapproval bot', () => {
     nock.cleanAll()
   })
 
+  test('PR blacklisted labels entry missing - will be approved', async (done) => {
+    const payload = require('./fixtures/pull_request.opened.json')
+    const config = btoa('from_owner:\n  - dkhmelenko\nrequired_labels:\n  - merge\napply_labels: []')
+
+    nock('https://api.github.com')
+      .get('/repos/dkhmelenko/autoapproval/contents/.github/autoapproval.yml')
+      .reply(200, { content: config })
+
+    nock('https://api.github.com')
+      .post('/repos/dkhmelenko/autoapproval/pulls/1/reviews', (body: any) => {
+        return body.event === 'APPROVE'
+      })
+      .reply(200)
+
+    // Receive a webhook event
+    await probot.receive({ name: 'pull_request', payload })
+    done()
+    nock.cleanAll()
+  })
+
   test('PR has blacklisted labels - will NOT be approved', async (done) => {
     const payload = require('./fixtures/pull_request.opened.json')
     const config = btoa('from_owner:\n  - dkhmelenko\nrequired_labels:\n  - merge\nblacklisted_labels:\n  - wip\napply_labels: []')
