@@ -51,6 +51,14 @@ required_labels:
 ```
 Assign an empty array if you want to approve PRs without any label (example: `required_labels: []`).
 
+### blacklisted_labels
+Defines the list of labels on PR, which will prevent the PR from being automatically approved. For example:
+```
+blacklisted_labels:
+  - wip
+```
+Assign an empty array if you do not want to blacklist any labels.
+
 ### apply_labels
 Defines the list of labels on PR, which should be added once PR was approved automatically. For example:
 ```
