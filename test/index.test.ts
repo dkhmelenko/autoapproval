@@ -23,7 +23,6 @@ describe('Autoapproval bot', () => {
   })
 
   test('PR has already applied labels and should do nothing', async (done) => {
-
     const payload = require('./fixtures/pull_request.opened.json')
     const config = btoa('from_owner: []\nrequired_labels: []\napply_labels:  \n- merge')
 
@@ -44,7 +43,6 @@ describe('Autoapproval bot', () => {
   })
 
   test('PR has required labels and owner satisfied - will be approved', async (done) => {
-
     const payload = require('./fixtures/pull_request.opened.json')
     const config = btoa('from_owner:\n  - dkhmelenko\nrequired_labels:\n  - merge\napply_labels: []')
 
@@ -54,10 +52,10 @@ describe('Autoapproval bot', () => {
 
     nock('https://api.github.com')
       .post('/repos/dkhmelenko/autoapproval/pulls/1/reviews', (body: any) => {
-        return body.event == 'APPROVE'
+        return body.event === 'APPROVE'
       })
       .reply(200)
-  
+
     // Receive a webhook event
     await probot.receive({ name: 'pull_request', payload })
     done()
@@ -77,7 +75,7 @@ describe('Autoapproval bot', () => {
         throw new Error('PR should not be approved in this case!')
       })
       .reply(200)
-  
+
     // Receive a webhook event
     await probot.receive({ name: 'pull_request', payload })
     done()
@@ -97,7 +95,7 @@ describe('Autoapproval bot', () => {
         throw new Error('PR should not be approved in this case!')
       })
       .reply(200)
-  
+
     // Receive a webhook event
     await probot.receive({ name: 'pull_request', payload })
     done()
@@ -114,7 +112,7 @@ describe('Autoapproval bot', () => {
 
     nock('https://api.github.com')
       .post('/repos/dkhmelenko/autoapproval/pulls/1/reviews', (body: any) => {
-        return body.event == 'APPROVE'
+        return body.event === 'APPROVE'
       })
       .reply(200)
 
@@ -123,7 +121,7 @@ describe('Autoapproval bot', () => {
         return body.includes('done')
       })
       .reply(200)
-  
+
     // Receive a webhook event
     await probot.receive({ name: 'pull_request', payload })
     done()
