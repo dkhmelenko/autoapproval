@@ -63,9 +63,8 @@ describe('Autoapproval bot', () => {
   })
 
   test('PR has blacklisted labels - will NOT be approved', async (done) => {
-
     const payload = require('./fixtures/pull_request.opened.json')
-    const config = btoa('from_owner:\n  - dkhmelenko\nrequired_labels: []\nblacklisted_labels:  - wip\napply_labels: []')
+    const config = btoa('from_owner:\n  - dkhmelenko\nrequired_labels: []\nblacklisted_labels:\n  - wip\napply_labels: []')
 
     nock('https://api.github.com')
         .get('/repos/dkhmelenko/autoapproval/contents/.github/autoapproval.yml')
@@ -125,7 +124,7 @@ describe('Autoapproval bot', () => {
 
   test('PR approved, label is applied', async (done) => {
     const payload = require('./fixtures/pull_request.opened.json')
-    const config = btoa('from_owner:\n  - dkhmelenko\nrequired_labels: []\napply_labels:\n  - done')
+    const config = btoa('from_owner:\n  - dkhmelenko\nrequired_labels: []\nblacklisted_labels: []\napply_labels:\n  - done')
 
     nock('https://api.github.com')
       .get('/repos/dkhmelenko/autoapproval/contents/.github/autoapproval.yml')

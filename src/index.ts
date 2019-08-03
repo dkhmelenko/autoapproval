@@ -35,7 +35,7 @@ export = (app: Application) => {
 
     // determine if the PR has any "blacklisted" labels
     const blacklistedLabels = config.blacklisted_labels
-        .filter((blacklistedLabel: string) => prLabels.includes(blacklistedLabel))
+        .filter((blacklistedLabel: any) => prLabels.includes(blacklistedLabel))
 
     if (missingRequiredLabels.length === 0 && ownerSatisfied && blacklistedLabels.length === 0) {
       const prParams = context.issue({ event: 'APPROVE', body: 'Approved :+1:' })
