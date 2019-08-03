@@ -6,7 +6,7 @@ import nock from 'nock'
 import myProbotApp from '../src'
 import { Probot } from 'probot'
 
-const btoa = require('btoa');
+const btoa = require('btoa')
 
 nock.disableNetConnect()
 
@@ -120,7 +120,7 @@ describe('Autoapproval bot', () => {
 
     nock('https://api.github.com')
       .post('/repos/dkhmelenko/autoapproval/issues/1/labels', (body: any) => {
-        return body.labels.includes('done')
+        return body.includes('done')
       })
       .reply(200)
   

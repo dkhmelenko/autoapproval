@@ -1,6 +1,8 @@
 import { Application } from 'probot' // eslint-disable-line no-unused-vars
 import { PullRequestsCreateReviewParams } from '@octokit/rest'
-const getConfig = require('probot-config');
+import { IssuesAddLabelsParams } from '@octokit/rest'
+
+const getConfig = require('probot-config')
 
 export = (app: Application) => {
   app.on(['pull_request.opened', 'pull_request.reopened', 'pull_request.labeled', 'pull_request.edited'], async (context) => {
@@ -15,9 +17,9 @@ export = (app: Application) => {
     // reading pull request labels for later check
     // if pull request contains all labels to be added, 
     // then the assumption is that the PR is already approved and no actions required
-    const prLabels: String[] = pr.labels.map((label: any) => label.name)
-    const labelsToAdd: String[] = config.apply_labels
-    const prHasAppliedLabels = labelsToAdd.length > 0 && labelsToAdd.every((label: String) => prLabels.includes(label))
+    const prLabels: string[] = pr.labels.map((label: any) => label.name)
+    const labelsToAdd: string[] = config.apply_labels
+    const prHasAppliedLabels = labelsToAdd.length > 0 && labelsToAdd.every((label: string) => prLabels.includes(label))
     context.log("PR labels: %s, config apply labels: %s, condition passed: %s", prLabels, labelsToAdd, prHasAppliedLabels)
     if (prHasAppliedLabels) {
       context.log("PR has already labels to be added after approval. The PR might be already approved.")
@@ -33,14 +35,15 @@ export = (app: Application) => {
       .filter((requiredLabel: any) => !prLabels.includes(requiredLabel))
 
     if (missingRequiredLabels.length == 0 && ownerSatisfied) {
-      const prParams = context.issue({ event: "APPROVE", body: "Approved :+1:" });
+      const prParams = context.issue({ event: "APPROVE", body: "Approved :+1:" })
 
       await context.github.pullRequests.createReview(prParams as PullRequestsCreateReviewParams)
 
       // if there are labels required to be added, add them
       if (labelsToAdd.length > 0) {
-        // trying to apply existing labels to PR. If labels ddn't exist, this call will fail
-        await context.github.issues.addLabels(context.issue({ labels: labelsToAdd}))
+        // trying to apply existing labels to PR. If labels didn't exist, this call will fail
+        const labels = context.issue({ labels: labelsToAdd})
+        await context.github.issues.addLabels(labels as IssuesAddLabelsParams)
       }
 
     } else {
