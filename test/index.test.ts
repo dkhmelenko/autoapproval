@@ -87,14 +87,14 @@ describe('Autoapproval bot', () => {
     const config = btoa('from_owner:\n  - dkhmelenko\nrequired_labels:\n  - merge\nblacklisted_labels:\n  - wip\napply_labels: []')
 
     nock('https://api.github.com')
-        .get('/repos/dkhmelenko/autoapproval/contents/.github/autoapproval.yml')
-        .reply(200, { content: config })
+      .get('/repos/dkhmelenko/autoapproval/contents/.github/autoapproval.yml')
+      .reply(200, { content: config })
 
     nock('https://api.github.com')
-        .post('/repos/dkhmelenko/autoapproval/pulls/1/reviews', (body: any) => {
-          throw new Error('PR should not be approved in this case!')
-        })
-        .reply(200)
+      .post('/repos/dkhmelenko/autoapproval/pulls/1/reviews', (body: any) => {
+        throw new Error('PR should not be approved in this case!')
+      })
+      .reply(200)
 
     // Receive a webhook event
     await probot.receive({ name: 'pull_request', payload })
