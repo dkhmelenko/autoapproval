@@ -17,7 +17,7 @@
     "dev": "nodemon --exec \"npm start\"",
     "start": "probot run ./lib/index.js",
     "lint": "standard **/*.ts --fix",
-    "test": "jest && standard **/*.ts",
+    "test": "jest --coverage && standard **/*.ts",
     "test:watch": "jest --watch --notify --notifyMode=change --coverage",
     "heroku-postbuild": "echo Skip build on Heroku"
   },
