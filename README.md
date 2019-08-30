@@ -1,6 +1,7 @@
 # autoapproval
 
 [![Build Status](https://travis-ci.org/dkhmelenko/autoapproval.svg?branch=master)](https://travis-ci.org/dkhmelenko/autoapproval)
+[![codecov](https://codecov.io/gh/dkhmelenko/autoapproval/branch/master/graph/badge.svg)](https://codecov.io/gh/dkhmelenko/autoapproval)
 
 A GitHub App built with [Probot](https://github.com/probot/probot) for approving pull requests automatically
 
