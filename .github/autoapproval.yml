@@ -1,10 +1,10 @@
 _extends: github-settings
 
 from_owner: 
-  - dkhmelenko
+  - dependabot-preview[bot]
 
 required_labels: 
-  - ready
+  - dependencies
 
 blacklisted_labels:
   - wip
