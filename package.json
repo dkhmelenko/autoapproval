@@ -35,7 +35,7 @@
     "jest": "^24.9.0",
     "nodemon": "^1.19.2",
     "smee-client": "^1.1.0",
-    "standard": "^14.1.0",
+    "standard": "^14.2.0",
     "ts-jest": "^24.0.2",
     "typescript": "^3.6.2",
     "typescript-eslint-parser": "^18.0.0"
