@@ -24,7 +24,7 @@
   "dependencies": {
     "@types/nock": "^10.0.3",
     "btoa": "^1.2.1",
-    "nock": "^11.3.3",
+    "nock": "^11.3.5",
     "probot": "^7.5.3",
     "probot-config": "^1.1.0"
   },
