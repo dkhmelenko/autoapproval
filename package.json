@@ -37,7 +37,7 @@
     "smee-client": "^1.1.0",
     "standard": "^14.1.0",
     "ts-jest": "^24.0.2",
-    "typescript": "^3.6.2",
+    "typescript": "^3.6.3",
     "typescript-eslint-parser": "^18.0.0"
   },
   "engines": {
