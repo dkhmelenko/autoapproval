@@ -4,7 +4,7 @@ import { PullRequestsCreateReviewParams, IssuesAddLabelsParams } from '@octokit/
 const getConfig = require('probot-config')
 
 export = (app: Application) => {
-  app.on(['pull_request.opened', 'pull_request.reopened', 'pull_request.labeled', 'pull_request.edited'], async (context) => {
+  app.on(['pull_request.opened', 'pull_request.reopened', 'pull_request.labeled', 'pull_request.edited', 'pull_request_review.dismissed'], async (context) => {
     app.log(context)
 
     // reading configuration
@@ -19,8 +19,16 @@ export = (app: Application) => {
     const prLabels: string[] = pr.labels.map((label: any) => label.name)
     const labelsToAdd: string[] = config.apply_labels
     const prHasAppliedLabels = labelsToAdd.length > 0 && labelsToAdd.every((label: string) => prLabels.includes(label))
+
+    var approvedReviewDismissed = false
+    if (context.payload.review && context.payload.review.user) {
+      const dismissedReviewFromBot = context.payload.review.user.login === 'autoapproval[bot]'
+      const reviewDismissed = context.payload.action === 'dismissed'
+      approvedReviewDismissed = dismissedReviewFromBot && reviewDismissed
+    }
+    context.log('Review dismissed: %s', approvedReviewDismissed)
     context.log('PR labels: %s, config apply labels: %s, condition passed: %s', prLabels, labelsToAdd, prHasAppliedLabels)
-    if (prHasAppliedLabels) {
+    if (prHasAppliedLabels && !approvedReviewDismissed) {
       context.log('PR has already labels to be added after approval. The PR might be already approved.')
       return
     }
