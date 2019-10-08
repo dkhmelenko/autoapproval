@@ -1,5 +1,6 @@
 import { Application } from 'probot' // eslint-disable-line no-unused-vars
-import { PullRequestsCreateReviewParams, IssuesAddLabelsParams } from '@octokit/rest'
+import { PullRequestsCreateReviewParams, IssuesAddLabelsParams, PullRequestsListReviewsParams, 
+  PullRequestsListReviewsResponse, PullRequestsListReviewsResponseItem } from '@octokit/rest'
 
 const getConfig = require('probot-config')
 
@@ -21,10 +22,15 @@ export = (app: Application) => {
     const prHasAppliedLabels = labelsToAdd.length > 0 && labelsToAdd.every((label: string) => prLabels.includes(label))
 
     var approvedReviewDismissed = false
-    if (context.payload.review && context.payload.review.user) {
-      const dismissedReviewFromBot = context.payload.review.user.login === 'autoapproval[bot]'
+    if (context.payload.review) {
+      let reviewParams = context.issue()
+      const reviews = await context.github.pullRequests.listReviews(reviewParams as PullRequestsListReviewsParams);
+      
+      let autoapprovalReviews = (reviews.data as PullRequestsListReviewsResponse)
+        .filter((item: PullRequestsListReviewsResponseItem) => item.user.login === "autoapproval[bot]")
+
       const reviewDismissed = context.payload.action === 'dismissed'
-      approvedReviewDismissed = dismissedReviewFromBot && reviewDismissed
+      approvedReviewDismissed = autoapprovalReviews.length > 0 && reviewDismissed
     }
     context.log('Review dismissed: %s', approvedReviewDismissed)
     context.log('PR labels: %s, config apply labels: %s, condition passed: %s', prLabels, labelsToAdd, prHasAppliedLabels)
