@@ -1,5 +1,5 @@
 import { Application } from 'probot' // eslint-disable-line no-unused-vars
-import { PullRequestsCreateReviewParams, IssuesAddLabelsParams } from '@octokit/rest'
+import { PullsCreateReviewParams, IssuesAddLabelsParams } from '@octokit/rest'
 
 const getConfig = require('probot-config')
 
@@ -49,14 +49,17 @@ export = (app: Application) => {
     }
 
     if (missingRequiredLabels.length === 0 && ownerSatisfied && blacklistedLabels.length === 0) {
-      const prParams = context.issue({ event: 'APPROVE', body: 'Approved :+1:' })
+      
+      const params: PullsCreateReviewParams = { owner: context.payload.owner, repo: context.payload.repo, 
+        pull_number: context.payload.pull_number, event: 'APPROVE', body: 'Approved :+1:'}
 
-      await context.github.pullRequests.createReview(prParams as PullRequestsCreateReviewParams)
+      await context.github.pulls.createReview(params)
 
       // if there are labels required to be added, add them
       if (labelsToAdd.length > 0) {
         // trying to apply existing labels to PR. If labels didn't exist, this call will fail
-        const labels = context.issue({ labels: labelsToAdd })
+        const labels: IssuesAddLabelsParams = { owner: context.payload.owner, repo: context.payload.repo, 
+          issue_number: context.payload.issue_number, labels: labelsToAdd }
         await context.github.issues.addLabels(labels as IssuesAddLabelsParams)
       }
     } else {
