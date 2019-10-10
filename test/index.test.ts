@@ -188,10 +188,15 @@ Pc6zWtW2XuNIGHw9pDj7v1yDolm7feBXLg8/u9APwHDy
   test('Autoapproval review was dismissed, approve PR again', async (done) => {
     const payload = require('./fixtures/pull_request_review.dismissed.json')
     const config = btoa('from_owner:\n  - dkhmelenko\nrequired_labels: []\nblacklisted_labels: []\napply_labels:\n  - merge')
+    const reviews = require('./fixtures/pull_request_reviews.json')
 
     nock('https://api.github.com')
       .get('/repos/dkhmelenko/autoapproval/contents/.github/autoapproval.yml')
       .reply(200, { content: config })
+
+    nock('https://api.github.com')
+      .get('/repos/dkhmelenko/autoapproval/pulls/1/reviews')
+      .reply(200, reviews)
 
     nock('https://api.github.com')
       .post('/repos/dkhmelenko/autoapproval/pulls/1/reviews', (body: any) => {
