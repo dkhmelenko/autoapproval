@@ -1,8 +1,7 @@
 import { Application } from 'probot' // eslint-disable-line no-unused-vars
 import {
-  PullsCreateReviewParams, IssuesAddLabelsParams, PullsListReviewsParams, PullsListReviewsResponse
+  PullRequestsCreateReviewParams, IssuesAddLabelsParams, PullRequestsListReviewsParams, PullRequestsListReviewsResponse
 } from '@octokit/rest'
-
 
 const getConfig = require('probot-config')
 
@@ -25,11 +24,10 @@ export = (app: Application) => {
 
     var approvedReviewDismissed = false
     if (context.payload.review) {
-      const reviewParams: PullsListReviewsParams = { owner: context.payload.owner, repo: context.payload.repo, 
-        pull_number: context.payload.pull_number }
-      const reviews = await context.github.pulls.listReviews(reviewParams)
+      const reviewParams = context.issue()
+      const reviews = await context.github.pullRequests.listReviews(reviewParams as PullRequestsListReviewsParams)
 
-      const autoapprovalReviews = (reviews.data as PullsListReviewsResponse)
+      const autoapprovalReviews = (reviews.data as PullRequestsListReviewsResponse)
         .filter(item => item.user.login === 'autoapproval[bot]')
 
       const reviewDismissed = context.payload.action === 'dismissed'
@@ -58,17 +56,14 @@ export = (app: Application) => {
     }
 
     if (missingRequiredLabels.length === 0 && ownerSatisfied && blacklistedLabels.length === 0) {
+      const prParams = context.issue({ event: 'APPROVE', body: 'Approved :+1:' })
 
-      const params: PullsCreateReviewParams = { owner: context.payload.owner, repo: context.payload.repo, 
-        pull_number: context.payload.pull_number, event: 'APPROVE', body: 'Approved :+1:'}
-
-      await context.github.pulls.createReview(params)
+      await context.github.pullRequests.createReview(prParams as PullRequestsCreateReviewParams)
 
       // if there are labels required to be added, add them
       if (labelsToAdd.length > 0) {
         // trying to apply existing labels to PR. If labels didn't exist, this call will fail
-        const labels: IssuesAddLabelsParams = { owner: context.payload.owner, repo: context.payload.repo, 
-          issue_number: context.payload.issue_number, labels: labelsToAdd }
+        const labels = context.issue({ labels: labelsToAdd })
         await context.github.issues.addLabels(labels as IssuesAddLabelsParams)
       }
     } else {
