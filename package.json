@@ -23,21 +23,22 @@
   },
   "dependencies": {
     "@types/nock": "^11.1.0",
+    "acorn": "^7.1.0",
     "btoa": "^1.2.1",
-    "nock": "^11.3.5",
-    "probot": "^7.5.3",
+    "nock": "^11.4.0",
+    "probot": "^9.5.2",
     "probot-config": "^1.1.0"
   },
   "devDependencies": {
     "@types/jest": "^24.0.18",
-    "@types/node": "^10.14.14",
+    "@types/node": "^10.14.21",
     "eslint-plugin-typescript": "^0.14.0",
     "jest": "^24.9.0",
-    "nodemon": "^1.19.2",
+    "nodemon": "^1.19.3",
     "smee-client": "^1.1.0",
     "standard": "^14.3.1",
     "ts-jest": "^24.1.0",
-    "typescript": "^3.6.3",
+    "typescript": "^3.6.4",
     "typescript-eslint-parser": "^22.0.0"
   },
   "engines": {
