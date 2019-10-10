@@ -1,6 +1,7 @@
 import { Application } from 'probot' // eslint-disable-line no-unused-vars
-import { PullRequestsCreateReviewParams, IssuesAddLabelsParams, PullRequestsListReviewsParams, 
-  PullRequestsListReviewsResponse, PullRequestsListReviewsResponseItem } from '@octokit/rest'
+import {
+  PullRequestsCreateReviewParams, IssuesAddLabelsParams, PullRequestsListReviewsParams, PullRequestsListReviewsResponse
+} from '@octokit/rest'
 
 const getConfig = require('probot-config')
 
@@ -23,11 +24,11 @@ export = (app: Application) => {
 
     var approvedReviewDismissed = false
     if (context.payload.review) {
-      let reviewParams = context.issue()
-      const reviews = await context.github.pullRequests.listReviews(reviewParams as PullRequestsListReviewsParams);
-      
-      let autoapprovalReviews = (reviews.data as PullRequestsListReviewsResponse)
-        .filter((item: PullRequestsListReviewsResponseItem) => item.user.login === "autoapproval[bot]")
+      const reviewParams = context.issue()
+      const reviews = await context.github.pullRequests.listReviews(reviewParams as PullRequestsListReviewsParams)
+
+      const autoapprovalReviews = (reviews.data as PullRequestsListReviewsResponse)
+        .filter(item => item.user.login === 'autoapproval[bot]')
 
       const reviewDismissed = context.payload.action === 'dismissed'
       approvedReviewDismissed = autoapprovalReviews.length > 0 && reviewDismissed
