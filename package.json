@@ -29,7 +29,7 @@
     "probot-config": "^1.1.0"
   },
   "devDependencies": {
-    "@types/jest": "^24.0.18",
+    "@types/jest": "^24.0.20",
     "@types/node": "^10.14.14",
     "eslint-plugin-typescript": "^0.14.0",
     "jest": "^24.9.0",
