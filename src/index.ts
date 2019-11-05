@@ -6,7 +6,7 @@ import {
 const getConfig = require('probot-config')
 
 export = (app: Application) => {
-  app.on(['pull_request.opened', 'pull_request.reopened', 'pull_request.labeled', 'pull_request.edited', 'pull_request_review.dismissed'], async (context) => {
+  app.on(['pull_request.opened', 'pull_request.reopened', 'pull_request.labeled', 'pull_request.edited', 'pull_request_review'], async (context) => {
     app.log(context)
 
     // reading configuration
@@ -24,11 +24,14 @@ export = (app: Application) => {
 
     var approvedReviewDismissed = false
     if (context.payload.review) {
+      context.log('Review: %s', context.payload.review)
       const reviewParams = context.issue()
       const reviews = await context.github.pullRequests.listReviews(reviewParams as PullRequestsListReviewsParams)
 
       const autoapprovalReviews = (reviews.data as PullRequestsListReviewsResponse)
         .filter(item => item.user.login === 'autoapproval[bot]')
+
+      context.log('Existing reviews: %s', reviews)
 
       const reviewDismissed = context.payload.action === 'dismissed'
       approvedReviewDismissed = autoapprovalReviews.length > 0 && reviewDismissed
