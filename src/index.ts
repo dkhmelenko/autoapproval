@@ -1,4 +1,4 @@
-import { Application } from 'probot' // eslint-disable-line no-unused-vars
+import { Application, Context } from 'probot' // eslint-disable-line no-unused-vars
 import {
   PullRequestsCreateReviewParams, IssuesAddLabelsParams, PullRequestsListReviewsParams, PullRequestsListReviewsResponse
 } from '@octokit/rest'
@@ -7,71 +7,77 @@ const getConfig = require('probot-config')
 
 export = (app: Application) => {
   app.on(['pull_request.opened', 'pull_request.reopened', 'pull_request.labeled', 'pull_request.edited', 'pull_request_review'], async (context) => {
-    app.log(context)
-
     // reading configuration
     const config = await getConfig(context, 'autoapproval.yml')
-    context.log(config, 'Loaded config')
+    context.log(config, '\n\nLoaded config')
+    context.log('Repo: %s', context.payload.repository.full_name)
 
     const pr = context.payload.pull_request
-
-    // reading pull request labels for later check
-    // if pull request contains all labels to be added,
-    // then the assumption is that the PR is already approved and no actions required
+    context.log('PR: %s', pr.html_url)
     const prLabels: string[] = pr.labels.map((label: any) => label.name)
-    const labelsToAdd: string[] = config.apply_labels
-    const prHasAppliedLabels = labelsToAdd.length > 0 && labelsToAdd.every((label: string) => prLabels.includes(label))
-
-    var approvedReviewDismissed = false
-    if (context.payload.review) {
-      context.log('Review: %s', context.payload.review)
-      const reviewParams = context.issue()
-      const reviews = await context.github.pullRequests.listReviews(reviewParams as PullRequestsListReviewsParams)
-
-      const autoapprovalReviews = (reviews.data as PullRequestsListReviewsResponse)
-        .filter(item => item.user.login === 'autoapproval[bot]')
-
-      context.log('Existing reviews: %s', reviews)
-
-      const reviewDismissed = context.payload.action === 'dismissed'
-      approvedReviewDismissed = autoapprovalReviews.length > 0 && reviewDismissed
-    }
-    context.log('Review dismissed: %s', approvedReviewDismissed)
-    context.log('PR labels: %s, config apply labels: %s, condition passed: %s', prLabels, labelsToAdd, prHasAppliedLabels)
-    if (prHasAppliedLabels && !approvedReviewDismissed) {
-      context.log('PR has already labels to be added after approval. The PR might be already approved.')
-      return
-    }
-
-    // reading pull request owner info and check it with configuration
-    const prUser = pr.user.login
-    const ownerSatisfied = config.from_owner.length === 0 || config.from_owner.includes(prUser)
-
-    // reading pull request labels and check them with configuration
-    const missingRequiredLabels = config.required_labels
-      .filter((requiredLabel: any) => !prLabels.includes(requiredLabel))
 
     // determine if the PR has any "blacklisted" labels
     var blacklistedLabels: string[] = []
     if (config.blacklisted_labels) {
       blacklistedLabels = config.blacklisted_labels
         .filter((blacklistedLabel: any) => prLabels.includes(blacklistedLabel))
+
+      // if PR contains any black listed labels, do not proceed further
+      if (blacklistedLabels.length > 0) {
+        context.log('PR black listed from approving: %s', blacklistedLabels)
+        return
+      }
     }
 
-    if (missingRequiredLabels.length === 0 && ownerSatisfied && blacklistedLabels.length === 0) {
-      const prParams = context.issue({ event: 'APPROVE', body: 'Approved :+1:' })
+    // reading pull request owner info and check it with configuration
+    const ownerSatisfied = config.from_owner.length === 0 || config.from_owner.includes(pr.user.login)
 
-      await context.github.pullRequests.createReview(prParams as PullRequestsCreateReviewParams)
+    // reading pull request labels and check them with configuration
+    const missingRequiredLabels = config.required_labels
+      .filter((requiredLabel: any) => !prLabels.includes(requiredLabel))
 
-      // if there are labels required to be added, add them
-      if (labelsToAdd.length > 0) {
-        // trying to apply existing labels to PR. If labels didn't exist, this call will fail
-        const labels = context.issue({ labels: labelsToAdd })
-        await context.github.issues.addLabels(labels as IssuesAddLabelsParams)
+    if (missingRequiredLabels.length === 0 && ownerSatisfied) {
+      const reviews = await getAutoapprovalReviews(context)
+
+      if (reviews.length > 0) {
+        context.log('PR has already reviews')
+        if (context.payload.action === 'dismissed') {
+          approvePullRequest(context)
+          applyLabels(context, config.apply_labels as string[])
+          context.log('Review was dismissed, approve again')
+        }
+      } else {
+        approvePullRequest(context)
+        applyLabels(context, config.apply_labels as string[])
+        context.log('PR approved first time')
       }
     } else {
-      // one of the ckecks failed
+      // one of the checks failed
       context.log('Condition failed! \n - missing required labels: %s\n - PR owner found: %s', missingRequiredLabels, ownerSatisfied)
     }
   })
+}
+
+async function approvePullRequest (context: Context) {
+  const prParams = context.issue({ event: 'APPROVE', body: 'Approved :+1:' })
+  await context.github.pullRequests.createReview(prParams as PullRequestsCreateReviewParams)
+}
+
+async function applyLabels (context: Context, labels: string[]) {
+  // if there are labels required to be added, add them
+  if (labels.length > 0) {
+    // trying to apply existing labels to PR. If labels didn't exist, this call will fail
+    const labelsParam = context.issue({ labels: labels })
+    await context.github.issues.addLabels(labelsParam as IssuesAddLabelsParams)
+  }
+}
+
+async function getAutoapprovalReviews (context: Context): Promise<PullRequestsListReviewsResponse> {
+  const reviewParams = context.issue()
+  const reviews = await context.github.pullRequests.listReviews(reviewParams as PullRequestsListReviewsParams)
+
+  const autoapprovalReviews = (reviews.data as PullRequestsListReviewsResponse)
+    .filter(item => item.user.login === 'autoapproval[bot]')
+
+  return autoapprovalReviews
 }

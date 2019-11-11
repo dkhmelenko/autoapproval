@@ -2,6 +2,7 @@
   "action": "opened",
   "pull_request": {
     "number": 1,
+    "html_url": "https://github.com/dkhmelenko/autoapproval/pull/1",
     "user": {
       "login": "dkhmelenko"
     },
@@ -25,6 +26,7 @@
   },
   "repository": {
     "name": "autoapproval",
+    "full_name": "dkhmelenko/autoapproval",
     "owner": {
       "login": "dkhmelenko"
     }
