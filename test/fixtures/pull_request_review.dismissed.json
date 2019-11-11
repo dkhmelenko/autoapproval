@@ -1,14 +1,8 @@
 {
     "action": "dismissed",
-    "review": {
-      "id": 237895671,
-      "node_id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3MjM3ODk1Njcx",
-      "user": {
-        "login": "autoapproval[bot]"
-      }
-    },
     "pull_request": {
         "number": 1,
+        "html_url": "https://github.com/dkhmelenko/autoapproval/pull/1",
         "user": {
             "login": "dkhmelenko"
         },
@@ -32,8 +26,9 @@
     },
     "repository": {
         "name": "autoapproval",
+        "full_name": "dkhmelenko/autoapproval",
         "owner": {
-        "login": "dkhmelenko"
+            "login": "dkhmelenko"
         }
     }
 }
