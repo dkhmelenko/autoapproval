@@ -70,7 +70,7 @@ Assign an empty array if no labels should be applied to PRs (example: `apply_lab
 
 _NOTES_: 
 1. If label doesn't exist, it will not be created. In order to apply the label after approving PR automatically, you need to define the label beforehand.
-2. If PR already contains all labels from **apply_labels** config, it will not be approved assuming that it was already approved.
+2. If PR already contains a review from this bot, new approval will not happen. Except the case when review was dismissed.
 
 ## Contributing
 
