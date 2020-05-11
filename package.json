@@ -30,7 +30,7 @@
   },
   "devDependencies": {
     "@types/jest": "^25.2.1",
-    "@types/node": "^13.13.4",
+    "@types/node": "^13.13.5",
     "eslint-plugin-typescript": "^0.14.0",
     "jest": "^25.5.3",
     "nodemon": "^2.0.3",
