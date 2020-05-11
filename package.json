@@ -32,7 +32,7 @@
     "@types/jest": "^25.2.1",
     "@types/node": "^13.13.5",
     "eslint-plugin-typescript": "^0.14.0",
-    "jest": "^25.5.3",
+    "jest": "^25.5.4",
     "nodemon": "^2.0.3",
     "smee-client": "^1.1.0",
     "standard": "^14.3.3",
