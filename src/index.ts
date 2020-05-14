@@ -1,5 +1,6 @@
-import { Application, Context } from 'probot' // eslint-disable-line no-unused-vars
-import { Octokit } from '@octokit/rest' // eslint-disable-line no-unused-vars
+/* eslint no-unused-vars: 0 */
+import { Application, Context } from 'probot'
+import { Octokit } from '@octokit/rest'
 
 const getConfig = require('probot-config')
 
