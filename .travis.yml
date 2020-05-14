@@ -4,7 +4,7 @@ node_js:
   - node
 notifications:
   disabled: true
-scripts:
-  - npm install codecov -g
+before_script:
+  - npm install codecov -g 
 after_success:
   - codecov
