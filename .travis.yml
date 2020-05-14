@@ -4,7 +4,7 @@ node_js:
   - "8.3"
 notifications:
   disabled: true
-scripts:
+before_script:
   - npm install codecov -g
 after_success:
   - codecov
