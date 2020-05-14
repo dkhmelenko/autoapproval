@@ -1,7 +1,7 @@
 sudo: true
 language: node_js
 node_js:
-  - node
+  - "8.3"
 notifications:
   disabled: true
 before_script:
