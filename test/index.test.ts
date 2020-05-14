@@ -14,7 +14,7 @@ describe('Autoapproval bot', () => {
   let probot: any
 
   beforeEach(() => {
-    probot = new Probot({})
+    probot = new Probot({ id: 123, githubToken: 'test' })
     // Load our app into probot
     const app = probot.load(myProbotApp)
 
