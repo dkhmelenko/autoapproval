@@ -1,6 +1,7 @@
-/* eslint no-unused-vars: 0 */
-import { Application, Context } from 'probot'
-import { Octokit } from '@octokit/rest'
+import { Application, Context } from 'probot' // eslint-disable-line no-unused-vars
+import {
+  PullRequestsCreateReviewParams, IssuesAddLabelsParams, PullRequestsListReviewsParams, PullRequestsListReviewsResponse
+} from '@octokit/rest'
 
 const getConfig = require('probot-config')
 
@@ -58,8 +59,8 @@ export = (app: Application) => {
 }
 
 async function approvePullRequest (context: Context) {
-  const prParams = context.issue({ event: 'APPROVE', body: 'Approved :+1:' }) as unknown
-  await context.github.pulls.createReview(prParams as Octokit.PullsCreateReviewParams)
+  const prParams = context.issue({ event: 'APPROVE', body: 'Approved :+1:' })
+  await context.github.pullRequests.createReview(prParams as PullRequestsCreateReviewParams)
 }
 
 async function applyLabels (context: Context, labels: string[]) {
@@ -67,16 +68,16 @@ async function applyLabels (context: Context, labels: string[]) {
   if (labels.length > 0) {
     // trying to apply existing labels to PR. If labels didn't exist, this call will fail
     const labelsParam = context.issue({ labels: labels })
-    await context.github.issues.addLabels(labelsParam)
+    await context.github.issues.addLabels(labelsParam as IssuesAddLabelsParams)
   }
 }
 
-async function getAutoapprovalReviews (context: Context): Promise<Octokit.PullsListReviewsResponse> {
+async function getAutoapprovalReviews (context: Context): Promise<PullRequestsListReviewsResponse> {
   const reviewParams = context.issue()
-  const reviews = await context.github.pulls.listReviews(reviewParams)
+  const reviews = await context.github.pullRequests.listReviews(reviewParams as PullRequestsListReviewsParams)
 
-  const autoapprovalReviews = (reviews.data as Octokit.PullsListReviewsResponse)
-    .filter((item: any) => item.user.login === 'autoapproval[bot]')
+  const autoapprovalReviews = (reviews.data as PullRequestsListReviewsResponse)
+    .filter(item => item.user.login === 'autoapproval[bot]')
 
   return autoapprovalReviews
 }
