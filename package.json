@@ -34,7 +34,7 @@
     "eslint-plugin-typescript": "^0.14.0",
     "jest": "^25.5.4",
     "nodemon": "^2.0.4",
-    "smee-client": "^1.1.0",
+    "smee-client": "^1.2.2",
     "standard": "^14.3.4",
     "ts-jest": "^25.5.1",
     "typescript": "^3.9.7",
