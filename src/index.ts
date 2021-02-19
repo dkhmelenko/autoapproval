@@ -64,7 +64,7 @@ export = (app: Application) => {
       }
     } else {
       // one of the checks failed
-      context.log('Condition failed! \n - missing required labels: %s\n - PR owner found: %s', missingRequiredLabels, ownerSatisfied)
+      context.log('Condition failed! \n - missing required labels: %s\n - PR owner found: %s', requiredLabelsSatisfied, ownerSatisfied)
     }
   })
 }
