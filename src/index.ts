@@ -33,10 +33,21 @@ export = (app: Application) => {
     const ownerSatisfied = config.from_owner.length === 0 || config.from_owner.includes(pr.user.login)
 
     // reading pull request labels and check them with configuration
-    const missingRequiredLabels = config.required_labels
-      .filter((requiredLabel: any) => !prLabels.includes(requiredLabel))
+    let requiredLabelsSatisfied
+    if (config.required_labels_mode == "one_of") {
+      // one of the required_labels needs to be applied
+      const appliedRequiredLabels = config.required_labels
+        .filter((requiredLabel: any) => prLabels.includes(requiredLabel))
+      requiredLabelsSatisfied = appliedRequiredLabels.lenth > 0
 
-    if (missingRequiredLabels.length === 0 && ownerSatisfied) {
+    } else {
+      // all of the required_labels need to be applied
+      const missingRequiredLabels = config.required_labels
+        .filter((requiredLabel: any) => !prLabels.includes(requiredLabel))
+      requiredLabelsSatisfied = missingRequiredLabels.lenth === 0
+    }
+
+    if (requiredLabelsSatisfied && ownerSatisfied) {
       const reviews = await getAutoapprovalReviews(context)
 
       if (reviews.length > 0) {
