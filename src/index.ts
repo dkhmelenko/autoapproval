@@ -38,13 +38,13 @@ export = (app: Application) => {
       // one of the required_labels needs to be applied
       const appliedRequiredLabels = config.required_labels
         .filter((requiredLabel: any) => prLabels.includes(requiredLabel))
-      requiredLabelsSatisfied = appliedRequiredLabels.lenth > 0
+      requiredLabelsSatisfied = appliedRequiredLabels.length > 0
 
     } else {
       // all of the required_labels need to be applied
       const missingRequiredLabels = config.required_labels
         .filter((requiredLabel: any) => !prLabels.includes(requiredLabel))
-      requiredLabelsSatisfied = missingRequiredLabels.lenth === 0
+      requiredLabelsSatisfied = missingRequiredLabels.length === 0
     }
 
     if (requiredLabelsSatisfied && ownerSatisfied) {
