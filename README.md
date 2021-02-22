@@ -72,6 +72,11 @@ _NOTES_:
 1. If label doesn't exist, it will not be created. In order to apply the label after approving PR automatically, you need to define the label beforehand.
 2. If PR already contains a review from this bot, new approval will not happen. Except the case when review was dismissed.
 
+### required_labels_mode
+Defines the behavior how `required_labels` should be treated.
+If nothing specified, then all labels from `required_label` are mandatory.
+If the value set to `one_of`, then it's enough to have only of the `required_labels` to get approval.
+
 ## Contributing
 
 If you have suggestions for how autoapproval could be improved, or want to report a bug, open an issue! We'd love all and any contributions.
