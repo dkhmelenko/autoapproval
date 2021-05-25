@@ -23,6 +23,31 @@ describe('Autoapproval bot', () => {
     myProbotApp(probot)
   })
 
+  test('PR has missing blacklisted_labels -> will be approved', async (done) => {
+    const payload = require('./fixtures/pull_request.opened.json')
+    const config = 'from_owner:\n  - dkhmelenko\nrequired_labels:\n  - merge\napply_labels: []'
+    const reviews = require('./fixtures/pull_request_reviews_empty.json')
+
+    nock('https://api.github.com')
+      .get('/repos/dkhmelenko/autoapproval/contents/.github%2Fautoapproval.yml')
+      .reply(200, config)
+
+    nock('https://api.github.com')
+      .get('/repos/dkhmelenko/autoapproval/pulls/1/reviews')
+      .reply(200, reviews)
+
+    nock('https://api.github.com')
+      .post('/repos/dkhmelenko/autoapproval/pulls/1/reviews', (body: any) => {
+        return body.event === 'APPROVE'
+      })
+      .reply(200)
+
+    // Receive a webhook event
+    await probot.receive({ name: 'pull_request', payload })
+    done()
+    nock.cleanAll()
+  })
+
   test('PR has blacklisted labels -> will NOT be approved', async (done) => {
     const payload = require('./fixtures/pull_request.opened.json')
     const config = 'from_owner:\n  - dkhmelenko\nrequired_labels:\n  - merge\nblacklisted_labels:\n  - wip\napply_labels: []'
@@ -186,13 +211,13 @@ describe('Autoapproval bot', () => {
     nock.cleanAll()
   })
 
-  test('PR is already approved -> will not be approved again', async (done) => {
-    const payload = require('./fixtures/pull_request_review.dismissed.json')
+  test('PR is already approved -> will NOT be approved again', async (done) => {
+    const payload = require('./fixtures/pull_request.opened.json')
     const config = 'from_owner:\n  - dkhmelenko\nrequired_labels: []\nblacklisted_labels: []\napply_labels:\n  - merge'
     const reviews = require('./fixtures/pull_request_reviews.json')
 
     nock('https://api.github.com')
-      .get('/repos/dkhmelenko/autoapproval/contents/.github/autoapproval.yml')
+      .get('/repos/dkhmelenko/autoapproval/contents/.github%2Fautoapproval.yml')
       .reply(200, config)
 
     nock('https://api.github.com')
@@ -200,7 +225,7 @@ describe('Autoapproval bot', () => {
       .reply(200, reviews)
 
     // Receive a webhook event
-    await probot.receive({ name: 'pull_request_review.dismissed', payload })
+    await probot.receive({ name: 'pull_request_review', payload })
     done()
     nock.cleanAll()
   })
@@ -211,7 +236,7 @@ describe('Autoapproval bot', () => {
     const reviews = require('./fixtures/pull_request_reviews.json')
 
     nock('https://api.github.com')
-      .get('/repos/dkhmelenko/autoapproval/contents/.github/autoapproval.yml')
+      .get('/repos/dkhmelenko/autoapproval/contents/.github%2Fautoapproval.yml')
       .reply(200, config)
 
     nock('https://api.github.com')
@@ -226,12 +251,12 @@ describe('Autoapproval bot', () => {
 
     nock('https://api.github.com')
       .post('/repos/dkhmelenko/autoapproval/issues/1/labels', (body: any) => {
-        return body.includes('merge')
+        return body.labels.includes('merge')
       })
       .reply(200)
 
     // Receive a webhook event
-    await probot.receive({ name: 'pull_request_review.dismissed', payload })
+    await probot.receive({ name: 'pull_request_review', payload })
     done()
     nock.cleanAll()
   })

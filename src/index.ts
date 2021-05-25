@@ -13,7 +13,7 @@ module.exports = (app: Probot) => {
 
     // determine if the PR has any "blacklisted" labels
     let blacklistedLabels: string[] = []
-    if (config.blacklisted_labels) {
+    if (config.blacklisted_labels !== undefined) {
       blacklistedLabels = config.blacklisted_labels
         .filter((blacklistedLabel: any) => prLabels.includes(blacklistedLabel))
 
@@ -81,8 +81,7 @@ async function getAutoapprovalReviews (context: Context): Promise<any> {
   const pr = context.pullRequest()
   const reviews = await context.octokit.pulls.listReviews(pr)
 
-  const autoapprovalReviews = (reviews.data)
-    .filter((item: any) => item.user.login === 'autoapproval[bot]')
+  const autoapprovalReviews = (reviews.data).filter((item: any) => item.user.login === 'autoapproval[bot]')
 
   return autoapprovalReviews
 }
