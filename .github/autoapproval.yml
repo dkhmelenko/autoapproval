@@ -1,7 +1,7 @@
 _extends: github-settings
 
 from_owner: 
-  - dependabot-preview[bot]
+  - dependabot[bot]
 
 required_labels: 
   - dependencies
