@@ -8,14 +8,6 @@
         },
         "labels": [
         {
-            "id": 1111,
-            "node_id": "MDU6TGFiZWw5NDk3Mzc1MDU=",
-            "url": "https://api.github.com/repos/Codertocat/Hello-World/labels/bug",
-            "name": "merge",
-            "color": "d73a4a",
-            "default": true
-        },
-        {
             "id": 2222,
             "node_id": "XDU6TGFiZWw5NDk3Mzc1MDU=",
             "name": "wip",
