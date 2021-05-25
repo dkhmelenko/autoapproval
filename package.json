@@ -22,29 +22,31 @@
     "heroku-postbuild": "echo Skip build on Heroku"
   },
   "dependencies": {
+    "@octokit/rest": "^18.5.3",
     "@types/nock": "^11.1.0",
     "btoa": "^1.2.1",
     "nock": "^13.0.11",
+    "octokit": "^1.0.5",
     "probot": "^11.3.0",
     "probot-config": "^1.1.0"
   },
   "devDependencies": {
     "@types/jest": "^26.0.22",
     "@types/node": "^15.6.1",
+    "@typescript-eslint/parser": "^4.25.0",
     "eslint-plugin-typescript": "^0.14.0",
     "jest": "^25.5.4",
     "nodemon": "^2.0.7",
     "smee-client": "^1.2.2",
     "standard": "^16.0.3",
     "ts-jest": "^25.5.1",
-    "typescript": "^3.9.9",
-    "typescript-eslint-parser": "^22.0.0"
+    "typescript": "^3.9.9"
   },
   "engines": {
     "node": ">= 8.3.0"
   },
   "standard": {
-    "parser": "typescript-eslint-parser",
+    "parser": "@typescript-eslint/parser",
     "env": [
       "jest"
     ],

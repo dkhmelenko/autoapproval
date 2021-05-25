@@ -1,14 +1,9 @@
-import { Application, Context } from 'probot' // eslint-disable-line no-unused-vars
-import {
-  PullRequestsCreateReviewParams, IssuesAddLabelsParams, PullRequestsListReviewsParams, PullRequestsListReviewsResponse
-} from '@octokit/rest'
+import { Probot, Context } from 'probot'
 
-const getConfig = require('probot-config')
-
-export = (app: Application) => {
+module.exports = (app: Probot) => {
   app.on(['pull_request.opened', 'pull_request.reopened', 'pull_request.labeled', 'pull_request.edited', 'pull_request_review'], async (context) => {
     // reading configuration
-    const config = await getConfig(context, 'autoapproval.yml')
+    const config: any = await context.config('autoapproval.yml')
     context.log(config, '\n\nLoaded config')
     context.log('Repo: %s', context.payload.repository.full_name)
 
@@ -17,7 +12,7 @@ export = (app: Application) => {
     const prLabels: string[] = pr.labels.map((label: any) => label.name)
 
     // determine if the PR has any "blacklisted" labels
-    var blacklistedLabels: string[] = []
+    let blacklistedLabels: string[] = []
     if (config.blacklisted_labels) {
       blacklistedLabels = config.blacklisted_labels
         .filter((blacklistedLabel: any) => prLabels.includes(blacklistedLabel))
@@ -34,12 +29,11 @@ export = (app: Application) => {
 
     // reading pull request labels and check them with configuration
     let requiredLabelsSatisfied
-    if (config.required_labels_mode == "one_of") {
+    if (config.required_labels_mode === 'one_of') {
       // one of the required_labels needs to be applied
       const appliedRequiredLabels = config.required_labels
         .filter((requiredLabel: any) => prLabels.includes(requiredLabel))
       requiredLabelsSatisfied = appliedRequiredLabels.length > 0
-
     } else {
       // all of the required_labels need to be applied
       const missingRequiredLabels = config.required_labels
@@ -70,8 +64,8 @@ export = (app: Application) => {
 }
 
 async function approvePullRequest (context: Context) {
-  const prParams = context.issue({ event: 'APPROVE', body: 'Approved :+1:' })
-  await context.github.pullRequests.createReview(prParams as PullRequestsCreateReviewParams)
+  const prParams = context.pullRequest({ event: 'APPROVE', body: 'Approved :+1:' })
+  await context.octokit.pulls.createReview(prParams)
 }
 
 async function applyLabels (context: Context, labels: string[]) {
@@ -79,16 +73,16 @@ async function applyLabels (context: Context, labels: string[]) {
   if (labels.length > 0) {
     // trying to apply existing labels to PR. If labels didn't exist, this call will fail
     const labelsParam = context.issue({ labels: labels })
-    await context.github.issues.addLabels(labelsParam as IssuesAddLabelsParams)
+    await context.octokit.issues.addLabels(labelsParam)
   }
 }
 
-async function getAutoapprovalReviews (context: Context): Promise<PullRequestsListReviewsResponse> {
-  const reviewParams = context.issue()
-  const reviews = await context.github.pullRequests.listReviews(reviewParams as PullRequestsListReviewsParams)
+async function getAutoapprovalReviews (context: Context): Promise<any> {
+  const pr = context.pullRequest()
+  const reviews = await context.octokit.pulls.listReviews(pr)
 
-  const autoapprovalReviews = (reviews.data as PullRequestsListReviewsResponse)
-    .filter(item => item.user.login === 'autoapproval[bot]')
+  const autoapprovalReviews = (reviews.data)
+    .filter((item: any) => item.user.login === 'autoapproval[bot]')
 
   return autoapprovalReviews
 }
