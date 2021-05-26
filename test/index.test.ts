@@ -23,7 +23,12 @@ describe('Autoapproval bot', () => {
     myProbotApp(probot)
   })
 
-  test('PR has missing blacklisted_labels -> will be approved', async (done) => {
+  afterEach(() => {
+    nock.cleanAll()
+    nock.enableNetConnect()
+  })
+
+  test('PR has missing blacklisted_labels -> will be approved', async () => {
     const payload = require('./fixtures/pull_request.opened.json')
     const config = 'from_owner:\n  - dkhmelenko\nrequired_labels:\n  - merge\napply_labels: []'
     const reviews = require('./fixtures/pull_request_reviews_empty.json')
@@ -44,11 +49,9 @@ describe('Autoapproval bot', () => {
 
     // Receive a webhook event
     await probot.receive({ name: 'pull_request', payload })
-    done()
-    nock.cleanAll()
   })
 
-  test('PR has blacklisted labels -> will NOT be approved', async (done) => {
+  test('PR has blacklisted labels -> will NOT be approved', async () => {
     const payload = require('./fixtures/pull_request.opened.json')
     const config = 'from_owner:\n  - dkhmelenko\nrequired_labels:\n  - merge\nblacklisted_labels:\n  - wip\napply_labels: []'
 
@@ -58,11 +61,9 @@ describe('Autoapproval bot', () => {
 
     // Receive a webhook event
     await probot.receive({ name: 'pull_request', payload })
-    done()
-    nock.cleanAll()
   })
 
-  test('PR has no required labels -> will NOT be approved', async (done) => {
+  test('PR has no required labels -> will NOT be approved', async () => {
     const payload = require('./fixtures/pull_request.opened.json')
     const config = 'from_owner:\n  - dkhmelenko\nrequired_labels:\n  - ready\nblacklisted_labels: []\napply_labels: []'
 
@@ -72,11 +73,9 @@ describe('Autoapproval bot', () => {
 
     // Receive a webhook event
     await probot.receive({ name: 'pull_request', payload })
-    done()
-    nock.cleanAll()
   })
 
-  test('PR has not all required labels -> will NOT be approved', async (done) => {
+  test('PR has not all required labels -> will NOT be approved', async () => {
     const payload = require('./fixtures/pull_request.opened.json')
     const config = 'from_owner:\n  - dkhmelenko\nrequired_labels:\n  - ready\n  - ready2\nblacklisted_labels: []\napply_labels: []'
 
@@ -86,11 +85,9 @@ describe('Autoapproval bot', () => {
 
     // Receive a webhook event
     await probot.receive({ name: 'pull_request', payload })
-    done()
-    nock.cleanAll()
   })
 
-  test('PR has no expected owner -> will NOT be approved', async (done) => {
+  test('PR has no expected owner -> will NOT be approved', async () => {
     const payload = require('./fixtures/pull_request.opened.json')
     const config = 'from_owner:\n  - blabla\nrequired_labels:\n  - merge\nblacklisted_labels: []\napply_labels: []'
 
@@ -100,11 +97,9 @@ describe('Autoapproval bot', () => {
 
     // Receive a webhook event
     await probot.receive({ name: 'pull_request', payload })
-    done()
-    nock.cleanAll()
   })
 
-  test('PR has required labels and expected owner -> will be approved', async (done) => {
+  test('PR has required labels and expected owner -> will be approved', async () => {
     const payload = require('./fixtures/pull_request.opened.json')
     const config = 'from_owner:\n  - dkhmelenko\nrequired_labels:\n  - merge\nblacklisted_labels: []\napply_labels: []'
     const reviews = require('./fixtures/pull_request_reviews_empty.json')
@@ -125,11 +120,9 @@ describe('Autoapproval bot', () => {
 
     // Receive a webhook event
     await probot.receive({ name: 'pull_request', payload })
-    done()
-    nock.cleanAll()
   })
 
-  test('PR has multiple required labels and expected owner -> will be approved', async (done) => {
+  test('PR has multiple required labels and expected owner -> will be approved', async () => {
     const payload = require('./fixtures/pull_request_opened_multiple_labels.json')
     const config = 'from_owner:\n  - dkhmelenko\nrequired_labels:\n  - merge\n  - merge2\nblacklisted_labels: []\napply_labels: []'
     const reviews = require('./fixtures/pull_request_reviews_empty.json')
@@ -150,11 +143,9 @@ describe('Autoapproval bot', () => {
 
     // Receive a webhook event
     await probot.receive({ name: 'pull_request', payload })
-    done()
-    nock.cleanAll()
   })
 
-  test('PR has one of multiple required labels and expected owner -> will be approved', async (done) => {
+  test('PR has one of multiple required labels and expected owner -> will be approved', async () => {
     const payload = require('./fixtures/pull_request_opened_multiple_labels.json')
     const config = 'from_owner:\n  - dkhmelenko\nrequired_labels:\n  - merge\n  - merge2\nrequired_labels_mode: one_of\nblacklisted_labels: []\napply_labels: []'
     const reviews = require('./fixtures/pull_request_reviews_empty.json')
@@ -175,11 +166,9 @@ describe('Autoapproval bot', () => {
 
     // Receive a webhook event
     await probot.receive({ name: 'pull_request', payload })
-    done()
-    nock.cleanAll()
   })
 
-  test('PR approved and label is applied', async (done) => {
+  test('PR approved and label is applied', async () => {
     const payload = require('./fixtures/pull_request.opened.json')
     const config = 'from_owner:\n  - dkhmelenko\nrequired_labels: []\nblacklisted_labels: []\napply_labels:\n  - done'
 
@@ -207,11 +196,9 @@ describe('Autoapproval bot', () => {
 
     // Receive a webhook event
     await probot.receive({ name: 'pull_request', payload })
-    done()
-    nock.cleanAll()
   })
 
-  test('PR is already approved -> will NOT be approved again', async (done) => {
+  test('PR is already approved -> will NOT be approved again', async () => {
     const payload = require('./fixtures/pull_request.opened.json')
     const config = 'from_owner:\n  - dkhmelenko\nrequired_labels: []\nblacklisted_labels: []\napply_labels:\n  - merge'
     const reviews = require('./fixtures/pull_request_reviews.json')
@@ -226,11 +213,9 @@ describe('Autoapproval bot', () => {
 
     // Receive a webhook event
     await probot.receive({ name: 'pull_request_review', payload })
-    done()
-    nock.cleanAll()
   })
 
-  test('Autoapproval review was dismissed -> approve PR again', async (done) => {
+  test('Autoapproval review was dismissed -> approve PR again', async () => {
     const payload = require('./fixtures/pull_request_review.dismissed.json')
     const config = 'from_owner:\n  - dkhmelenko\nrequired_labels: []\nblacklisted_labels: []\napply_labels:\n  - merge'
     const reviews = require('./fixtures/pull_request_reviews.json')
@@ -257,8 +242,6 @@ describe('Autoapproval bot', () => {
 
     // Receive a webhook event
     await probot.receive({ name: 'pull_request_review', payload })
-    done()
-    nock.cleanAll()
   })
 })
 
