@@ -18,6 +18,9 @@ npm run build
 
 # Run the bot
 npm start
+
+# Run tests, don't forget to run `npm run build` beforehand
+npm run test
 ```
 
 This app requires `Write code` permissions in order not to have issues with approving PRs.
