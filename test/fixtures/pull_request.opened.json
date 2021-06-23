@@ -1,6 +1,7 @@
 {
   "action": "opened",
   "pull_request": {
+    "node_id": "MDExOlB1bGxSZXF1ZN0NjExMzU2MTgy",
     "number": 1,
     "html_url": "https://github.com/dkhmelenko/autoapproval/pull/1",
     "user": {

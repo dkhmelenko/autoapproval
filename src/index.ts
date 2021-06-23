@@ -49,11 +49,13 @@ module.exports = (app: Probot) => {
         if (context.payload.action === 'dismissed') {
           approvePullRequest(context)
           applyLabels(context, config.apply_labels as string[])
+          applyAutoMerge(context, prLabels, config.auto_merge_labels, config.auto_rebase_merge_labels, config.auto_squash_merge_labels)
           context.log('Review was dismissed, approve again')
         }
       } else {
         approvePullRequest(context)
         applyLabels(context, config.apply_labels as string[])
+        applyAutoMerge(context, prLabels, config.auto_merge_labels, config.auto_rebase_merge_labels, config.auto_squash_merge_labels)
         context.log('PR approved first time')
       }
     } else {
@@ -75,6 +77,37 @@ async function applyLabels (context: Context, labels: string[]) {
     const labelsParam = context.issue({ labels: labels })
     await context.octokit.issues.addLabels(labelsParam)
   }
+}
+
+function applyAutoMerge (context: Context, prLabels: string[], mergeLabels: string[], rebaseLabels: string[], squashLabels: string[]) {
+  if (mergeLabels && prLabels.filter((label: any) => mergeLabels.includes(label)).length > 0) {
+    enableAutoMerge(context, 'MERGE')
+  }
+  if (rebaseLabels && prLabels.filter((label: any) => rebaseLabels.includes(label)).length > 0) {
+    enableAutoMerge(context, 'REBASE')
+  }
+  if (squashLabels && prLabels.filter((label: any) => squashLabels.includes(label)).length > 0) {
+    enableAutoMerge(context, 'SQUASH')
+  }
+}
+
+const enableAutoMergeMutation = `
+  mutation {
+    enablePullRequestAutoMerge(input:{
+      pullRequestId: "$pullRequestId",
+      mergeMethod: $mergeMethod
+    }) {
+      pullRequest { id }
+    }
+  }
+`
+
+async function enableAutoMerge (context: Context, method: string) {
+  context.log('Auto merging with merge method %s', method)
+  await context.octokit.graphql(enableAutoMergeMutation, {
+    pullRequestId: context.payload.pull_request.node_id,
+    mergeMethod: method
+  })
 }
 
 async function getAutoapprovalReviews (context: Context): Promise<any> {

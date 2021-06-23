@@ -198,6 +198,99 @@ describe('Autoapproval bot', () => {
     await probot.receive({ name: 'pull_request', payload })
   })
 
+  test('PR approved and auto merge is enabled', async () => {
+    const payload = require('./fixtures/pull_request.opened.json')
+    const config = 'from_owner:\n  - dkhmelenko\nrequired_labels: []\nblacklisted_labels: []\napply_labels: []\nauto_merge_labels:\n  - merge'
+
+    const reviews = require('./fixtures/pull_request_reviews_empty.json')
+
+    nock('https://api.github.com')
+      .get('/repos/dkhmelenko/autoapproval/contents/.github%2Fautoapproval.yml')
+      .reply(200, config)
+
+    nock('https://api.github.com')
+      .get('/repos/dkhmelenko/autoapproval/pulls/1/reviews')
+      .reply(200, reviews)
+
+    nock('https://api.github.com')
+      .post('/repos/dkhmelenko/autoapproval/pulls/1/reviews', (body: any) => {
+        return body.event === 'APPROVE'
+      })
+      .reply(200)
+
+    nock('https://api.github.com')
+      .post('/graphql', (body: any) => {
+        return body.variables.pullRequestId === 'MDExOlB1bGxSZXF1ZN0NjExMzU2MTgy' &&
+           body.variables.mergeMethod === 'MERGE'
+      })
+      .reply(200)
+
+    // Receive a webhook event
+    await probot.receive({ name: 'pull_request', payload })
+  })
+
+  test('PR approved and auto merge squash is enabled', async () => {
+    const payload = require('./fixtures/pull_request.opened.json')
+    const config = 'from_owner:\n  - dkhmelenko\nrequired_labels: []\nblacklisted_labels: []\napply_labels: []\nauto_squash_merge_labels:\n  - merge'
+
+    const reviews = require('./fixtures/pull_request_reviews_empty.json')
+
+    nock('https://api.github.com')
+      .get('/repos/dkhmelenko/autoapproval/contents/.github%2Fautoapproval.yml')
+      .reply(200, config)
+
+    nock('https://api.github.com')
+      .get('/repos/dkhmelenko/autoapproval/pulls/1/reviews')
+      .reply(200, reviews)
+
+    nock('https://api.github.com')
+      .post('/repos/dkhmelenko/autoapproval/pulls/1/reviews', (body: any) => {
+        return body.event === 'APPROVE'
+      })
+      .reply(200)
+
+    nock('https://api.github.com')
+      .post('/graphql', (body: any) => {
+        return body.variables.pullRequestId === 'MDExOlB1bGxSZXF1ZN0NjExMzU2MTgy' &&
+           body.variables.mergeMethod === 'SQUASH'
+      })
+      .reply(200)
+
+    // Receive a webhook event
+    await probot.receive({ name: 'pull_request', payload })
+  })
+
+  test('PR approved and auto merge rebase is enabled', async () => {
+    const payload = require('./fixtures/pull_request.opened.json')
+    const config = 'from_owner:\n  - dkhmelenko\nrequired_labels: []\nblacklisted_labels: []\napply_labels: []\nauto_rebase_merge_labels:\n  - merge'
+
+    const reviews = require('./fixtures/pull_request_reviews_empty.json')
+
+    nock('https://api.github.com')
+      .get('/repos/dkhmelenko/autoapproval/contents/.github%2Fautoapproval.yml')
+      .reply(200, config)
+
+    nock('https://api.github.com')
+      .get('/repos/dkhmelenko/autoapproval/pulls/1/reviews')
+      .reply(200, reviews)
+
+    nock('https://api.github.com')
+      .post('/repos/dkhmelenko/autoapproval/pulls/1/reviews', (body: any) => {
+        return body.event === 'APPROVE'
+      })
+      .reply(200)
+
+    nock('https://api.github.com')
+      .post('/graphql', (body: any) => {
+        return body.variables.pullRequestId === 'MDExOlB1bGxSZXF1ZN0NjExMzU2MTgy' &&
+           body.variables.mergeMethod === 'REBASE'
+      })
+      .reply(200)
+
+    // Receive a webhook event
+    await probot.receive({ name: 'pull_request', payload })
+  })
+
   test('PR is already approved -> will NOT be approved again', async () => {
     const payload = require('./fixtures/pull_request.opened.json')
     const config = 'from_owner:\n  - dkhmelenko\nrequired_labels: []\nblacklisted_labels: []\napply_labels:\n  - merge'
