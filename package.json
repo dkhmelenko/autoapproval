@@ -35,7 +35,7 @@
     "@types/node": "^15.12.5",
     "@typescript-eslint/parser": "^4.28.1",
     "eslint-plugin-typescript": "^0.14.0",
-    "jest": "^27.0.4",
+    "jest": "^27.0.6",
     "nodemon": "^2.0.8",
     "smee-client": "^1.2.2",
     "standard": "^16.0.3",
