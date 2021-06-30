@@ -36,9 +36,13 @@ More about it can be found on [Github Help](https://help.github.com/en/articles/
 
 ## Configuration
 
-In order to use the bot, the config file should be provided. Config file should be defined in your repository. Config file is the yml file with the path `.github/autoapproval.yml`. The file should have 3 entries.
+In order to use the bot, the config file should be provided. Config file should be defined in your repository. Config file is the yml file with the path `.github/autoapproval.yml`. The file should have at least 3 mandatory entries: `from_owner`, `required_labels` and `apply_labels`.
+
+---
 
 ### from_owner
+**mandatory**
+
 Defines the list of users, whos pull requests should be approved automatically. For example:
 ```
 from_owner:
@@ -47,7 +51,11 @@ from_owner:
 ```
 Assign an empty array if you want to approve PRs from any user (example: `from_owner: []`).
 
+---
+
 ### required_labels
+**mandatory**
+
 Defines the list of labels on PR, which should be present for approving PR automatically. For example:
 ```
 required_labels:
@@ -55,12 +63,17 @@ required_labels:
 ```
 Assign an empty array if you want to approve PRs without any label (example: `required_labels: []`).
 
+---
+
 ### required_labels_mode
 Defines the behavior how `required_labels` should be treated.
 If nothing specified, then all labels from `required_label` are mandatory.
 If the value set to `one_of`, then it's enough to have only of the `required_labels` to get approval.
 
+---
+
 ### blacklisted_labels
+
 Defines the list of labels on PR, which will prevent the PR from being automatically approved. For example:
 ```
 blacklisted_labels:
@@ -68,7 +81,11 @@ blacklisted_labels:
 ```
 Assign an empty array if you do not want to blacklist any labels.
 
+---
+
 ### apply_labels
+**mandatory**
+
 Defines the list of labels on PR, which should be added once PR was approved automatically. For example:
 ```
 apply_labels:
@@ -80,12 +97,14 @@ _NOTES_:
 1. If label doesn't exist, it will not be created. In order to apply the label after approving PR automatically, you need to define the label beforehand.
 2. If PR already contains a review from this bot, new approval will not happen. Except the case when review was dismissed.
 
-### auto_merge_labels
+---
+
+### auto_merge_labels / auto_squash_merge_labels / auto_rebase_merge_labels
 Defines labels for which the bot should enable auto merging for the pull request.
 This will automatically merge the PR after approving it when all checks passed.
-Note that the `Allow auto-merge` setting must be enabled for the repository.
 
-For example
+
+The following example with merge PR with the method "Merge" on GitHub:
 ```
 auto_merge_labels:
   - auto-merge
@@ -103,8 +122,10 @@ auto_rebase_merge_labels:
   - auto-rebase-merge
 ```
 
-_NOTE_:
-- it is enough for one of the labels in the list to be applied to enable auto merging with the respective method
+_NOTES_:
+- the `Allow auto-merge` setting must be enabled for the repository.
+- it is enough to use only one of the options: `auto_merge_labels`, `auto_squash_merge_labels` or `auto_rebase_merge_labels`
+- the repository should have enabled the merge method
 
 ## Contributing
 
