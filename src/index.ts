@@ -92,12 +92,17 @@ function applyAutoMerge (context: Context, prLabels: string[], mergeLabels: stri
 }
 
 const enableAutoMergeMutation = `
-  mutation {
+  mutation($pullRequestId: ID!, $mergeMethod: PullRequestMergeMethod!) {
     enablePullRequestAutoMerge(input:{
-      pullRequestId: "$pullRequestId",
+      pullRequestId: $pullRequestId,
       mergeMethod: $mergeMethod
     }) {
-      pullRequest { id }
+      pullRequest {
+        id,
+        autoMergeRequest {
+          mergeMethod
+        }
+      }
     }
   }
 `
