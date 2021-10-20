@@ -1,4 +1,5 @@
 import { Probot, Context } from 'probot'
+import { PullRequestEvent, PullRequestReviewEvent } from '@octokit/webhooks-types'
 
 module.exports = (app: Probot) => {
   app.on(['pull_request.opened', 'pull_request.reopened', 'pull_request.labeled', 'pull_request.edited', 'pull_request_review'], async (context) => {
@@ -109,8 +110,10 @@ const enableAutoMergeMutation = `
 
 async function enableAutoMerge (context: Context, method: string) {
   context.log('Auto merging with merge method %s', method)
+  const payload = context.payload as PullRequestEvent | PullRequestReviewEvent
+
   await context.octokit.graphql(enableAutoMergeMutation, {
-    pullRequestId: context.payload.pull_request.node_id,
+    pullRequestId: payload.pull_request.node_id,
     mergeMethod: method
   })
 }
