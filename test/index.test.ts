@@ -378,6 +378,16 @@ describe('Autoapproval bot', () => {
     await new Promise(process.nextTick) // Don't assert until all async processing finishes
     expect(nock.isDone()).toBeTruthy()
   })
+
+  test('PR labeled when opening -> label event is ignored', async () => {
+    const payload = require('./fixtures/pull_request.labeled.on_open.json')
+
+    // Receive a webhook event
+    await probot.receive({ name: 'pull_request', payload })
+
+    await new Promise(process.nextTick) // Don't assert until all async processing finishes
+    expect(nock.isDone()).toBeTruthy()
+  })
 })
 
 // For more information about testing with Jest see:

@@ -1,0 +1,29 @@
+{
+  "action": "labeled",
+  "pull_request": {
+    "node_id": "MDExOlB1bGxSZXF1ZN0NjExMzU2MTgy",
+    "number": 1,
+    "html_url": "https://github.com/dkhmelenko/autoapproval/pull/1",
+    "created_at": "2022-03-30T15:17:37.000+02:00",
+    "updated_at": "2022-03-30T15:17:37.000+02:00",
+    "user": {
+      "login": "dkhmelenko"
+    },
+    "labels": [
+      {
+        "id": 2222,
+        "node_id": "XDU6TGFiZWw5NDk3Mzc1MDU=",
+        "name": "cool label",
+        "color": "d73a4a",
+        "default": true
+      }
+    ]
+  },
+  "repository": {
+    "name": "autoapproval",
+    "full_name": "dkhmelenko/autoapproval",
+    "owner": {
+      "login": "dkhmelenko"
+    }
+  }
+}
