@@ -57,8 +57,5 @@
       "/lib/*"
     ]
   },
-  "jest": {
-    "testEnvironment": "node"
-  },
   "heroku-run-build-script": true
 }
