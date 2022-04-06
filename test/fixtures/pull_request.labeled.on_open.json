@@ -1,5 +1,5 @@
 {
-  "action": "opened",
+  "action": "labeled",
   "pull_request": {
     "node_id": "MDExOlB1bGxSZXF1ZN0NjExMzU2MTgy",
     "number": 1,
@@ -11,24 +11,9 @@
     },
     "labels": [
       {
-        "id": 1111,
-        "node_id": "MDU6TGFiZWw5NDk3Mzc1MDU=",
-        "url": "https://api.github.com/repos/Codertocat/Hello-World/labels/bug",
-        "name": "merge",
-        "color": "d73a4a",
-        "default": true
-      },
-      {
         "id": 2222,
         "node_id": "XDU6TGFiZWw5NDk3Mzc1MDU=",
-        "name": "wip",
-        "color": "d73a4a",
-        "default": true
-      },
-      {
-        "id": 3333,
-        "node_id": "XDU6TGFiZWw5NDk3Mzc1MDU=",
-        "name": "merge2",
+        "name": "cool label",
         "color": "d73a4a",
         "default": true
       }

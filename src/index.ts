@@ -3,16 +3,30 @@ import { PullRequestEvent, PullRequestReviewEvent } from '@octokit/webhooks-type
 
 module.exports = (app: Probot) => {
   app.on(['pull_request.opened', 'pull_request.reopened', 'pull_request.labeled', 'pull_request.edited', 'pull_request_review'], async (context) => {
-    // reading configuration
-    const config: any = await context.config('autoapproval.yml')
-    context.log(config, '\n\nLoaded config')
     context.log('Repo: %s', context.payload.repository.full_name)
 
     const pr = context.payload.pull_request
     context.log('PR: %s', pr.html_url)
-    const prLabels: string[] = pr.labels.map((label: any) => label.name)
+    context.log('Action: %s', context.payload.action)
+
+    // NOTE(dabrady) When a PR is first opened, it can fire several different kinds of events if the author e.g. requests
+    // reviewers or adds labels during creation. This triggers parallel runs of our GitHub App, so we need to filter out
+    // those simultaneous events and focus just on the re/open event in this scenario.
+    //
+    // These simultaneous events contain the same pull request data in their payloads, and specify the 'updated at'
+    // timestamp to be the same as the 'created at' timestamp for the pull request. We can use this to distinguish events
+    // that are fired during creation from events fired later on.
+    if (!['opened', 'reopened'].includes(context.payload.action) && pr.created_at === pr.updated_at) {
+      context.log('Ignoring additional creation event: %s', context.payload.action)
+      return
+    }
+
+    // reading configuration
+    const config: any = await context.config('autoapproval.yml')
+    context.log(config, '\n\nLoaded config')
 
     // determine if the PR has any "blacklisted" labels
+    const prLabels: string[] = pr.labels.map((label: any) => label.name)
     let blacklistedLabels: string[] = []
     if (config.blacklisted_labels !== undefined) {
       blacklistedLabels = config.blacklisted_labels

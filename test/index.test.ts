@@ -49,6 +49,9 @@ describe('Autoapproval bot', () => {
 
     // Receive a webhook event
     await probot.receive({ name: 'pull_request', payload })
+
+    await new Promise(process.nextTick) // Don't assert until all async processing finishes
+    expect(nock.isDone()).toBeTruthy()
   })
 
   test('PR has blacklisted labels -> will NOT be approved', async () => {
@@ -61,6 +64,9 @@ describe('Autoapproval bot', () => {
 
     // Receive a webhook event
     await probot.receive({ name: 'pull_request', payload })
+
+    await new Promise(process.nextTick) // Don't assert until all async processing finishes
+    expect(nock.isDone()).toBeTruthy()
   })
 
   test('PR has no required labels -> will NOT be approved', async () => {
@@ -73,6 +79,9 @@ describe('Autoapproval bot', () => {
 
     // Receive a webhook event
     await probot.receive({ name: 'pull_request', payload })
+
+    await new Promise(process.nextTick) // Don't assert until all async processing finishes
+    expect(nock.isDone()).toBeTruthy()
   })
 
   test('PR has not all required labels -> will NOT be approved', async () => {
@@ -85,6 +94,9 @@ describe('Autoapproval bot', () => {
 
     // Receive a webhook event
     await probot.receive({ name: 'pull_request', payload })
+
+    await new Promise(process.nextTick) // Don't assert until all async processing finishes
+    expect(nock.isDone()).toBeTruthy()
   })
 
   test('PR has no expected owner -> will NOT be approved', async () => {
@@ -97,6 +109,9 @@ describe('Autoapproval bot', () => {
 
     // Receive a webhook event
     await probot.receive({ name: 'pull_request', payload })
+
+    await new Promise(process.nextTick) // Don't assert until all async processing finishes
+    expect(nock.isDone()).toBeTruthy()
   })
 
   test('PR has required labels and expected owner -> will be approved', async () => {
@@ -120,6 +135,9 @@ describe('Autoapproval bot', () => {
 
     // Receive a webhook event
     await probot.receive({ name: 'pull_request', payload })
+
+    await new Promise(process.nextTick) // Don't assert until all async processing finishes
+    expect(nock.isDone()).toBeTruthy()
   })
 
   test('PR has multiple required labels and expected owner -> will be approved', async () => {
@@ -143,6 +161,9 @@ describe('Autoapproval bot', () => {
 
     // Receive a webhook event
     await probot.receive({ name: 'pull_request', payload })
+
+    await new Promise(process.nextTick) // Don't assert until all async processing finishes
+    expect(nock.isDone()).toBeTruthy()
   })
 
   test('PR has one of multiple required labels and expected owner -> will be approved', async () => {
@@ -166,6 +187,9 @@ describe('Autoapproval bot', () => {
 
     // Receive a webhook event
     await probot.receive({ name: 'pull_request', payload })
+
+    await new Promise(process.nextTick) // Don't assert until all async processing finishes
+    expect(nock.isDone()).toBeTruthy()
   })
 
   test('PR approved and label is applied', async () => {
@@ -196,6 +220,9 @@ describe('Autoapproval bot', () => {
 
     // Receive a webhook event
     await probot.receive({ name: 'pull_request', payload })
+
+    await new Promise(process.nextTick) // Don't assert until all async processing finishes
+    expect(nock.isDone()).toBeTruthy()
   })
 
   test('PR approved and auto merge is enabled', async () => {
@@ -227,6 +254,9 @@ describe('Autoapproval bot', () => {
 
     // Receive a webhook event
     await probot.receive({ name: 'pull_request', payload })
+
+    await new Promise(process.nextTick) // Don't assert until all async processing finishes
+    expect(nock.isDone()).toBeTruthy()
   })
 
   test('PR approved and auto merge squash is enabled', async () => {
@@ -258,6 +288,9 @@ describe('Autoapproval bot', () => {
 
     // Receive a webhook event
     await probot.receive({ name: 'pull_request', payload })
+
+    await new Promise(process.nextTick) // Don't assert until all async processing finishes
+    expect(nock.isDone()).toBeTruthy()
   })
 
   test('PR approved and auto merge rebase is enabled', async () => {
@@ -289,6 +322,9 @@ describe('Autoapproval bot', () => {
 
     // Receive a webhook event
     await probot.receive({ name: 'pull_request', payload })
+
+    await new Promise(process.nextTick) // Don't assert until all async processing finishes
+    expect(nock.isDone()).toBeTruthy()
   })
 
   test('PR is already approved -> will NOT be approved again', async () => {
@@ -306,6 +342,9 @@ describe('Autoapproval bot', () => {
 
     // Receive a webhook event
     await probot.receive({ name: 'pull_request_review', payload })
+
+    await new Promise(process.nextTick) // Don't assert until all async processing finishes
+    expect(nock.isDone()).toBeTruthy()
   })
 
   test('Autoapproval review was dismissed -> approve PR again', async () => {
@@ -335,6 +374,19 @@ describe('Autoapproval bot', () => {
 
     // Receive a webhook event
     await probot.receive({ name: 'pull_request_review', payload })
+
+    await new Promise(process.nextTick) // Don't assert until all async processing finishes
+    expect(nock.isDone()).toBeTruthy()
+  })
+
+  test('PR labeled when opening -> label event is ignored', async () => {
+    const payload = require('./fixtures/pull_request.labeled.on_open.json')
+
+    // Receive a webhook event
+    await probot.receive({ name: 'pull_request', payload })
+
+    await new Promise(process.nextTick) // Don't assert until all async processing finishes
+    expect(nock.isDone()).toBeTruthy()
   })
 })
 
