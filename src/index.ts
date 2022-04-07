@@ -62,15 +62,15 @@ module.exports = (app: Probot) => {
       if (reviews.length > 0) {
         context.log('PR has already reviews')
         if (context.payload.action === 'dismissed') {
+          await applyAutoMerge(context, prLabels, config.auto_merge_labels, config.auto_rebase_merge_labels, config.auto_squash_merge_labels)
           approvePullRequest(context)
           applyLabels(context, config.apply_labels as string[])
-          applyAutoMerge(context, prLabels, config.auto_merge_labels, config.auto_rebase_merge_labels, config.auto_squash_merge_labels)
           context.log('Review was dismissed, approve again')
         }
       } else {
+        await applyAutoMerge(context, prLabels, config.auto_merge_labels, config.auto_rebase_merge_labels, config.auto_squash_merge_labels)
         approvePullRequest(context)
         applyLabels(context, config.apply_labels as string[])
-        applyAutoMerge(context, prLabels, config.auto_merge_labels, config.auto_rebase_merge_labels, config.auto_squash_merge_labels)
         context.log('PR approved first time')
       }
     } else {
