@@ -25,7 +25,7 @@
     "@octokit/rest": "^19.0.3",
     "@types/nock": "^11.1.0",
     "btoa": "^1.2.1",
-    "nock": "^13.2.8",
+    "nock": "^13.2.9",
     "octokit": "^2.0.3",
     "probot": "^12.2.5",
     "probot-config": "^1.1.0"
