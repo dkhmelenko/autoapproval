@@ -22,7 +22,7 @@
     "heroku-postbuild": "echo Skip build on Heroku"
   },
   "dependencies": {
-    "@octokit/rest": "^19.0.3",
+    "@octokit/rest": "^19.0.4",
     "@types/nock": "^11.1.0",
     "btoa": "^1.2.1",
     "nock": "^13.2.9",
