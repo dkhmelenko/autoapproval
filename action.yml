@@ -1,0 +1,5 @@
+name: "Autoapproval"
+description: "Probot application for approving pull requests"
+runs:
+  using: "node12"
+  main: "dist/index.js"
