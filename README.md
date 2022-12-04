@@ -34,6 +34,8 @@ You won't be able to merge your pull request until the required number of review
 
 More about it can be found on [Github Help](https://help.github.com/en/articles/about-pull-request-reviews#required-reviews).
 
+### Configure GitHub Action
+
 This application runs on GitHub actions.
 Add the following configuration to `.github/workflows/autoapproval.yml
 ```yaml
