@@ -36,8 +36,8 @@ More about it can be found on [Github Help](https://help.github.com/en/articles/
 
 ### Configure GitHub Action
 
-This application runs on GitHub actions.
-Add the following configuration to `.github/workflows/autoapproval.yml
+This application runs on GitHub Actions.
+Create new file in your directory `.github/workflows/autoapproval.yml` and add the following configuration.
 ```yaml
 on:
   pull_request:
