@@ -1,5 +1,9 @@
 name: "Autoapproval"
 description: "Probot application for approving pull requests"
+author: "Dmytro Khmelenko"
 runs:
   using: "node16"
   main: "dist/index.js"
+branding:
+  icon: "arrow-right"
+  color: "green"
