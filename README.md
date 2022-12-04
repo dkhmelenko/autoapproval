@@ -34,6 +34,25 @@ You won't be able to merge your pull request until the required number of review
 
 More about it can be found on [Github Help](https://help.github.com/en/articles/about-pull-request-reviews#required-reviews).
 
+This application runs on GitHub actions.
+Add the following configuration to `.github/workflows/autoapproval.yml
+```yaml
+on:
+  pull_request:
+    types: [opened, reopened, labeled, edited]
+  pull_request_review:
+    types: [dismissed]
+  
+jobs:
+  autoapproval:
+    runs-on: ubuntu-latest
+    name: Autoapproval
+    steps:
+      - uses: dkhmelenko/autoapproval@v1.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+```
+
 ## Configuration
 
 In order to use the bot, the config file should be provided. Config file should be defined in your repository. Config file is the yml file with the path `.github/autoapproval.yml`. The file should have at least 3 mandatory entries: `from_owner`, `required_labels` and `apply_labels`.
@@ -126,6 +145,19 @@ _NOTES_:
 - the `Allow auto-merge` setting must be enabled for the repository.
 - it is enough to use only one of the options: `auto_merge_labels`, `auto_squash_merge_labels` or `auto_rebase_merge_labels`
 - the repository should have enabled the merge method
+
+
+## Releasing
+To release new version of the app, the following steps are required:
+1. compile Node.js module into a single file by running the following command
+```
+ncc build index.js --license licenses.txt
+```
+2. tag new release and push tags
+```
+git tag -a -m "New action release" v1.1
+git push --tags
+```
 
 ## Contributing
 
