@@ -44,6 +44,10 @@ on:
     types: [opened, reopened, labeled, edited]
   pull_request_review:
     types: [dismissed]
+    
+permissions:
+  contents: read
+  pull-requests: write
   
 jobs:
   autoapproval:
