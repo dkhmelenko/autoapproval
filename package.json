@@ -28,7 +28,7 @@
     "btoa": "^1.2.1",
     "nock": "^13.2.9",
     "octokit": "^2.0.9",
-    "probot": "^12.2.8",
+    "probot": "^12.2.9",
     "probot-config": "^1.1.0"
   },
   "devDependencies": {
