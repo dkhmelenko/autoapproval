@@ -140,6 +140,32 @@ describe('Autoapproval bot', () => {
     expect(nock.isDone()).toBeTruthy()
   })
 
+  test('PR has expected mixed-case owner -> will be approved', async () => {
+    const payload = require('./fixtures/pull_request.opened.json')
+    const config = 'from_owner:\n  - dKHMelenko\nrequired_labels:\n  - merge\nblacklisted_labels: []\napply_labels: []'
+    const reviews = require('./fixtures/pull_request_reviews_empty.json')
+
+    nock('https://api.github.com')
+      .get('/repos/dkhmelenko/autoapproval/contents/.github%2Fautoapproval.yml')
+      .reply(200, config)
+
+    nock('https://api.github.com')
+      .get('/repos/dkhmelenko/autoapproval/pulls/1/reviews')
+      .reply(200, reviews)
+
+    nock('https://api.github.com')
+      .post('/repos/dkhmelenko/autoapproval/pulls/1/reviews', (body: any) => {
+        return body.event === 'APPROVE'
+      })
+      .reply(200)
+
+    // Receive a webhook event
+    await probot.receive({ name: 'pull_request', payload })
+
+    await new Promise(process.nextTick) // Don't assert until all async processing finishes
+    expect(nock.isDone()).toBeTruthy()
+  })
+
   test('PR has multiple required labels and expected owner -> will be approved', async () => {
     const payload = require('./fixtures/pull_request_opened_multiple_labels.json')
     const config = 'from_owner:\n  - dkhmelenko\nrequired_labels:\n  - merge\n  - merge2\nblacklisted_labels: []\napply_labels: []'

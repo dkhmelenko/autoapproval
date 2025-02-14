@@ -1,5 +1,5 @@
-import { Probot, Context } from 'probot'
 import { PullRequestEvent, PullRequestReviewEvent } from '@octokit/webhooks-types'
+import { Context, Probot } from 'probot'
 
 module.exports = (app: Probot) => {
   app.on(['pull_request.opened', 'pull_request.reopened', 'pull_request.labeled', 'pull_request.edited', 'pull_request_review'], async (context) => {
@@ -39,8 +39,9 @@ module.exports = (app: Probot) => {
       }
     }
 
-    // reading pull request owner info and check it with configuration
-    const ownerSatisfied = config.from_owner.length === 0 || config.from_owner.includes(pr.user.login)
+    // reading pull request owner info and check it with configuration (case insensitive)
+    const lowerLogin = pr.user.login.toLowerCase()
+    const ownerSatisfied = config.from_owner.length === 0 || config.from_owner.some((owner: string) => owner.toLowerCase() === lowerLogin)
 
     // reading pull request labels and check them with configuration
     let requiredLabelsSatisfied
@@ -75,7 +76,7 @@ module.exports = (app: Probot) => {
       }
     } else {
       // one of the checks failed
-      context.log('Condition failed! \n - missing required labels: %s\n - PR owner found: %s', requiredLabelsSatisfied, ownerSatisfied)
+      context.log('Condition failed! \n - has required labels: %s\n - PR owner found: %s', requiredLabelsSatisfied, ownerSatisfied)
     }
   })
 }
