@@ -7,7 +7,9 @@ A GitHub App built with [Probot](https://github.com/probot/probot) for approving
 
 ![image](https://user-images.githubusercontent.com/4306809/50573484-13a0a100-0dd5-11e9-8ef3-aad5069e83e3.png)
 
-## Setup
+## Setup (for contributors)
+These are instructions for contributing code to the bot. If you just want to run the bot, skip to
+the Configure section below.
 
 ```sh
 # Install dependencies
@@ -61,7 +63,9 @@ jobs:
 
 ## Configuration
 
-In order to use the bot, the config file should be provided. Config file should be defined in your repository. Config file is the yml file with the path `.github/autoapproval.yml`. The file should have at least 3 mandatory entries: `from_owner`, `required_labels` and `apply_labels`.
+In order to use the bot, the config file should be provided. Config file should be defined in your
+repository. Config file is the yml file with the path `.github/autoapproval.yml`. The file should
+have at least 3 mandatory entries: `from_owner`, `required_labels`, `apply_labels`, and `blacklisted_labels`.
 
 ---
 
@@ -98,7 +102,7 @@ If the value set to `one_of`, then it's enough to have only of the `required_lab
 ---
 
 ### blacklisted_labels
-
+**mandatory**
 Defines the list of labels on PR, which will prevent the PR from being automatically approved. For example:
 ```
 blacklisted_labels:
